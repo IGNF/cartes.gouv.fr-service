@@ -1,0 +1,47 @@
+{
+  "name": "cartes.gouv.fr-service",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/service-library.umd.js",
+  "module": "dist/service-library.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/service-library.es.js",
+      "require": "./dist/service-library.umd.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "package.json"
+  ],
+  "dependencies": {
+    "keycloak-js": "^26.2.2"
+  },
+  "devDependencies": {
+    "@badgateway/oauth2-client": "^3.3.1",
+    "@eslint/js": "^9.39.4",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "eslint": "^9.39.4",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.5.0",
+    "typedoc": "^0.28.19",
+    "vite": "^6.2.6",
+    "vue-eslint-parser": "^10.4.0"
+  },
+  "peerDependencies": {
+    "pinia": "^2.1.7",
+    "pinia-plugin-store": "^2.2.9",
+    "vue": "^3.5.13",
+    "vue-logger-plugin": "^2.2.3",
+    "vue-router": "^4.5.0"
+  },
+  "scripts": {
+    "dev": "vite --config vite.config.js playground",
+    "build": "vite build",
+    "pack:check": "npm pack --dry-run",
+    "docs": "typedoc",
+    "lint": "eslint ."
+  }
+}

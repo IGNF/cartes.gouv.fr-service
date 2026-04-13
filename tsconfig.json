@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    "composite": true,
+    "noEmit": true,
+    "ignoreDeprecations": "6.0",
+    
+    "baseUrl": ".",
+    "paths": {
+      "@": ["./src"],
+      "@/*": ["./src/*"]
+    },
+
+    "allowJs": true,
+    "checkJs": true,
+    "noImplicitAny": false,
+
+    "jsx": "preserve",
+
+    "types": ["vite/client"]
+  },
+  "include": ["src", "playground", "dist"]
+}
