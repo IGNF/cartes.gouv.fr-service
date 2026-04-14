@@ -28,9 +28,11 @@
         "@method",
         "@module",
         "@param",
+        "@property",
         "@returns",
         "@todo",
         "@type",
+        "@typedef"
   ],
   "sidebarLinks": {
     "github": "https://github.com/IGNF/cartes.gouv.fr-service"

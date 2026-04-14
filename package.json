@@ -43,7 +43,7 @@
     "dev": "vite --config vite.config.js playground",
     "build": "vite build",
     "pack:check": "npm pack --dry-run",
-    "docs": "typedoc",
+    "docs": "typedoc --options typedoc.json --useTsLinkResolution true --jsDocCompatibility true --suppressCommentWarningsInDeclarationFiles",
     "lint": "eslint ."
   }
 }

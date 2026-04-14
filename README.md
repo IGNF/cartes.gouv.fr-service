@@ -19,6 +19,40 @@ const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
 ```
 
+## Usage dans une page SPA
+
+```js
+<script setup>
+import { getService, useAuth } from '@cartes.gouv.fr/service';
+
+const service = getService({ mode: 'local' });
+const { isAuthenticated, user } = useAuth({ service });
+
+const onConnect = () => {
+  service.getAccessLogin()
+  .then((url) => {
+    location.href = url; // redirection vers la page sso
+  });
+}
+const onDisconnect = () => {
+  service.getAccessLogout()
+  .then((url) => {
+    location.href = url; // redirection vers la page sso
+  });
+}
+</script>
+
+<template>
+    <div v-if="isAuthenticated">
+      <pre>{{ user }}</pre>
+      <button @click="onDisconnect">Disconnect</button>
+    </div>
+    <div v-else>
+      <button @click="onConnect">Connect</button>
+    </div>
+</template>
+```
+
 ## Exemple
 
 Lancer l'exemple
@@ -68,3 +102,7 @@ Le tarball genere par `npm pack` inclut notamment:
 - `src/`
 - `README.md`
 - `package.json`
+
+## Diagrammes de Séquences - Authentification
+
+cf. [docs/authentication-sequence.md](docs/authentication-sequence.md)

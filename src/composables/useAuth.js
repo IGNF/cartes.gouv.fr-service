@@ -8,8 +8,7 @@ import { getSettings } from '@/core/extends/ExtendSettings';
 const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
 
 /**
- * Dépendances acceptées par useAuth.
- * @typedef {Object} UseAuthDeps
+ * @typedef {Object} UseAuthDeps - Dépendances acceptées par useAuth.
  * @property {Object} [service] Implémentation du service d'authentification (requise à l'exécution).
  * @property {Object} [store] Instance Pinia optionnelle.
  * @property {Object|null} [router] Instance Vue Router optionnelle.
@@ -19,8 +18,7 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
  */
 
 /**
- * API publique retournée par useAuth.
- * @typedef {Object} UseAuthResult
+ * @typedef {Object} UseAuthResult - API publique retournée par useAuth.
  * @property {import('vue').Ref<boolean>} isAuthenticated État d'authentification réactif.
  * @property {import('vue').Ref<Object>} user Données utilisateur authentifié en réactif.
  * @property {() => Promise<void>} checkAuthentication Résout et synchronise l'état d'authentification.
@@ -34,7 +32,7 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
  * @returns {UseAuthResult}
  * @example
  * const service = getService({ mode : 'local'});
- * const { isAuthenticated, user, checkAuthentication } = useAuth({
+ * const { isAuthenticated, user, checkAuthentication, checkSession } = useAuth({
  *   service,
  *   onLogin: () => logger.log('User logged in!'),
  *   onLogout: () => logger.log('User logged out!'),
@@ -102,7 +100,7 @@ export function useAuth(deps = {}) {
   };
 
   /**
-    * Supprime le marqueur de tentative auto-SSO pour l'onglet courant.
+   * Supprime le marqueur de tentative auto-SSO pour l'onglet courant.
    * @returns {void}
    */
   const cleanAutoSSOAttemptedFlag = () => {
@@ -114,7 +112,7 @@ export function useAuth(deps = {}) {
   };
 
   /**
-    * Marque le contrôle auto-SSO comme déjà tenté pour l'onglet courant.
+   * Marque le contrôle auto-SSO comme déjà tenté pour l'onglet courant.
    * @returns {void}
    */
   const setAutoSSOAttemptedFlag = () => {
@@ -126,7 +124,7 @@ export function useAuth(deps = {}) {
   };
 
   /**
-    * Indique si l'auto-SSO a déjà été tenté pour l'onglet courant.
+   * Indique si l'auto-SSO a déjà été tenté pour l'onglet courant.
    * @returns {boolean}
    */
   const hasAutoSSOBeenAttempted = () => {
@@ -145,6 +143,7 @@ export function useAuth(deps = {}) {
    * car l’accès storage/cookies tiers est bloqué !
    * > requestStorageAccess: Must be handling a user gesture to use.
    * > requestStorageAccess: Permission denied.
+   * @public
    * @returns {Promise<boolean>}
    */
   const checkSession = async () => {
@@ -189,6 +188,7 @@ export function useAuth(deps = {}) {
 
   /**
    * Résout le statut d'authentification et synchronise l'état réactif local.
+   * @public
    * @returns {Promise<void>}
    */
   const checkAuthentication = async () => {
