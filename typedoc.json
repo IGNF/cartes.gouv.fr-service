@@ -8,8 +8,31 @@
   "exclude": ["dist/**", "playground/**", "**/*.test.*", "**/*.spec.*"],
   "skipErrorChecking": true,
   "intentionallyNotExported": [],
-  "excludePrivate": true,
+  "excludePrivate": false,
   "excludeProtected": false,
   "categorizeByGroup": false,
-  "sort": ["source-order"]
+  "sort": ["source-order"],
+  "plugin": ["typedoc-plugin-mermaid"],
+  "projectDocuments": [],
+  "blockTags": [
+        "@alias", 
+        "@classdesc", 
+        "@constructor",
+        "@description",
+        "@example",
+        "@extends",
+        "@fires",
+        "@fixme",
+        "@function",
+        "@mixin",
+        "@method",
+        "@module",
+        "@param",
+        "@returns",
+        "@todo",
+        "@type",
+  ],
+  "sidebarLinks": {
+    "github": "https://github.com/IGNF/cartes.gouv.fr-service"
+  }
 }

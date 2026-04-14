@@ -1,11 +1,13 @@
-# @cartes.gouv.fr/service
+# cartes.gouv.fr-service
 
 Bibliotheque de services pour l'authentification et l'acces API (mode local et distant).
 
 ## Installation
 
+**TODO**
+
 ```bash
-npm install @cartes.gouv.fr/service
+npm install cartes.gouv.fr-service
 ```
 
 ## Usage minimal
@@ -15,6 +17,14 @@ import { getService, useAuth } from '@cartes.gouv.fr/service';
 
 const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
+```
+
+## Exemple
+
+Lancer l'exemple
+
+```bash
+npm run dev
 ```
 
 ## Configuration
@@ -52,7 +62,9 @@ setSettings({
 ## Contenu du package npm
 
 Le tarball genere par `npm pack` inclut notamment:
+
 - `dist/`
+- `docs/`
 - `src/`
 - `README.md`
 - `package.json`
