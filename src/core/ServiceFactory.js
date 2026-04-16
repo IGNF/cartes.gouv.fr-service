@@ -1,6 +1,9 @@
 import ServiceBase from "@/core/ServiceBase";
 import ServiceLocal from '@/core/ServiceLocal';
 import ServiceRemote from '@/core/ServiceRemote';
+import { applyClasses } from '@/core/extends/ExtendClass';
+import { applyInstances } from '@/core/extends/ExtendInstance';
+import { applyMixins } from '@/core/extends/ExtendMixin';
 
 export const serviceFactoryCreate = (options) => {
     const inputOptions = options || {};
@@ -19,5 +22,10 @@ export const serviceFactoryCreate = (options) => {
         instance = base;
         break;
     }
+
+    applyClasses(instance);
+    applyInstances(instance);
+    applyMixins(instance);
+
     return instance;
 }

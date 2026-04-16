@@ -93,6 +93,16 @@ setSettings({
 });
 ```
 
+## Tests
+
+> Fonctionnement des classes pour etendre les fonctionnalités du service
+
+Lancer les test
+
+```bash
+npm run test
+```
+
 ## Contenu du package npm
 
 Le tarball genere par `npm pack` inclut notamment:

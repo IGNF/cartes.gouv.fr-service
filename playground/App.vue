@@ -19,8 +19,13 @@ log.apply({ level: 'debug' });
 
 /**
  * Exemples disponibles dans ce playground :
- * - minimal        : service local + useAuth({ service })
- * - with-settings  : injecte setSettings(...) avant getService(...)
+ * - [x] minimal        : service local + useAuth({ service })
+ * - [x] with-settings  : injecte setSettings() avec des variables d'environnement pour configurer le service et useAuth
+ * - [ ] with-router    : injecte un router dans useAuth pour redirection après auth
+ * - [x] with-callbacks : utilise des callbacks dans useAuth pour gérer les événements d'authentification
+ * - [x] with-logger    : utilise le logger pour afficher les événements d'authentification et les erreurs
+ * - [x] with-docs      : ajoute un bouton pour récupérer les documents de l'entrepôt après authentification (service.getDocuments())
+ * - [ ] with-remote    : utilise un service en mode 'remote' pour se connecter à un serveur d'authentification distant (ex: Keycloak) et récupérer les documents de l'entrepôt distant
  */
 const PLAYGROUND_EXAMPLE = import.meta.env.VITE_PLAYGROUND_EXAMPLE || 'minimal';
 

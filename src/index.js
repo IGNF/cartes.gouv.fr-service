@@ -1,8 +1,8 @@
 // Service Factory
 export { serviceFactoryCreate as getService } from './core/ServiceFactory';
 // Extends
-export { setInstance } from './core/extends/ExtendInstance';
-export { setClass } from './core/extends/ExtendClass';
+export { setInstance, getInstance } from './core/extends/ExtendInstance';
+export { setClass, getClass } from './core/extends/ExtendClass';
 export { setMixin } from './core/extends/ExtendMixin';
 export { setSettings } from './core/extends/ExtendSettings';
 // Composables
