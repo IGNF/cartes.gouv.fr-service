@@ -1,31 +1,31 @@
 let clazz = null;
 
-function assignValue(target, key, value) {
+function assignValue(service, key, value) {
 	if (typeof value === 'function') {
-		target[key] = value.bind(target);
+		service[key] = value.bind(service);
 	} else if (Array.isArray(value)) {
-		target[key] = [...value];
+		service[key] = [...value];
 	} else if (value && typeof value === 'object') {
-		target[key] = { ...value };
+		service[key] = { ...value };
 	} else {
-		target[key] = value;
+		service[key] = value;
 	}
 }
 
-function getClassEntries(c) {
-	if (!c) {
+function getClassEntries() {
+	if (!clazz) {
 		return [];
 	}
 
-	if (typeof c === 'function') {
-		const names = Object.getOwnPropertyNames(c.prototype || {})
-			.filter((name) => name !== 'constructor' && typeof c.prototype[name] === 'function');
+	if (typeof clazz === 'function') {
+		const names = Object.getOwnPropertyNames(clazz.prototype || {})
+			.filter((name) => name !== 'constructor' && typeof clazz.prototype[name] === 'function');
 
-		return names.map((name) => [name, c.prototype[name]]);
+		return names.map((name) => [name, clazz.prototype[name]]);
 	}
 
-	if (typeof c === 'object') {
-		return Object.keys(c).map((key) => [key, c[key]]);
+	if (typeof clazz === 'object') {
+		return Object.keys(clazz).map((key) => [key, clazz[key]]);
 	}
 
 	return [];
@@ -39,20 +39,12 @@ export function setClass(c) {
 	clazz = c;
 }
 
-/**
- * Retourne la classe injectee active.
- * @returns {any}
- */
-export function getClass() {
-	return clazz;
-}
-
-export function applyClasses(service) {
+export function applyClass(service) {
 	if (!clazz) {
 		return;
 	}
 
-	const entries = getClassEntries(clazz);
+	const entries = getClassEntries();
 	entries.forEach(([key, value]) => {
 		assignValue(service, key, value);
 	});

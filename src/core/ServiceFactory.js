@@ -1,8 +1,8 @@
 import ServiceBase from "@/core/ServiceBase";
 import ServiceLocal from '@/core/ServiceLocal';
 import ServiceRemote from '@/core/ServiceRemote';
-import { applyClasses } from '@/core/extends/ExtendClass';
-import { applyInstances } from '@/core/extends/ExtendInstance';
+import { applyClass } from '@/core/extends/ExtendClass';
+import { applyInstance } from '@/core/extends/ExtendInstance';
 import { applyMixins } from '@/core/extends/ExtendMixin';
 
 export const serviceFactoryCreate = (options) => {
@@ -23,8 +23,8 @@ export const serviceFactoryCreate = (options) => {
         break;
     }
 
-    applyClasses(instance);
-    applyInstances(instance);
+    applyClass(instance);
+    applyInstance(instance);
     applyMixins(instance);
 
     return instance;

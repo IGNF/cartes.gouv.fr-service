@@ -5,17 +5,8 @@ describe('setInstance', () => {
     vi.resetModules();
   });
 
-  it('stocke une seule instance injectée', async () => {
-    const { setInstance, getInstance } = await import('../ExtendInstance?t=' + Date.now());
-    const injected = { featureFlag: true };
-
-    setInstance(injected);
-
-    expect(getInstance()).toBe(injected);
-  });
-
   it('applique les méthodes/propriétés d\'instance au service', async () => {
-    const { setInstance, applyInstances } = await import('../ExtendInstance?t=' + Date.now());
+    const { setInstance, applyInstance } = await import('../ExtendInstance?t=' + Date.now());
 
     class ExtraFeature {
       constructor() {
@@ -29,7 +20,7 @@ describe('setInstance', () => {
 
     const service = { counter: 5 };
     setInstance(new ExtraFeature());
-    applyInstances(service);
+    applyInstance(service);
 
     expect(service.counter).toBe(2);
     expect(typeof service.getDouble).toBe('function');

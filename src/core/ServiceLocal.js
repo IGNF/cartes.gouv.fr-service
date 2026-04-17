@@ -158,22 +158,43 @@ class ServiceLocal extends ServiceBase {
     const checkSsoTimeout = Number(this.settings.IamCheckSsoTimeout || 5000);
 
     logger.log("use checkKeycloakSessionAdapter oauth");
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
+
+        // const checkUrl = new URL(this.#client.settings.server + this.#client.settings.authorizationEndpoint);
+        // checkUrl.searchParams.set('client_id', checkSsoClientId);
+        // checkUrl.searchParams.set('redirect_uri', this.url + '/silent-check-sso-oauth.html');
+        // checkUrl.searchParams.set('response_type', 'code');
+        // checkUrl.searchParams.set('scope', 'openid');
+        // checkUrl.searchParams.set('prompt', 'none');
+        // iframe.src = checkUrl.toString();
         
-        const checkUrl = new URL(this.#client.settings.server + this.#client.settings.authorizationEndpoint);
-        checkUrl.searchParams.set('client_id', checkSsoClientId);
-        checkUrl.searchParams.set('redirect_uri', this.url + '/silent-check-sso-oauth.html');
-        checkUrl.searchParams.set('response_type', 'code');
-        checkUrl.searchParams.set('scope', 'openid');
+        const checkClient = new OAuth2Client({
+          ...this.#client.settings,
+          clientId: checkSsoClientId,
+        });
+        
+        const codeVerifier = await generateCodeVerifier();
+        const state = buildOAuthState();
+        
         // INFO
-        // 'prompt=none' is required for silent authentication; 
+        // 'prompt=none' is required for silent authentication;
         // it prevents the OAuth2 server from showing any user interaction prompts in the iframe and
         // instead immediately returns an error if the user is not already authenticated.
-        checkUrl.searchParams.set('prompt', 'none');
-        
-        iframe.src = checkUrl.toString();
+        const checkUrl = await checkClient.authorizationCode.getAuthorizeUri({
+          redirectUri: this.url + '/silent-check-sso-oauth.html',
+          state,
+          codeVerifier,
+          scope: ['openid'],
+          extraParams: {
+            // En iframe, aucun prompt utilisateur n'est autorise.
+            prompt: 'none'
+          },
+          responseMode: 'query'
+        });
+
+        iframe.src = checkUrl;
         document.body.appendChild(iframe);
         
         const timeout = setTimeout(() => {

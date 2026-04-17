@@ -1,38 +1,34 @@
 let instance = null;
 
-function assignValue(target, key, value) {
+function assignValue(service, key, value) {
 	if (typeof value === 'function') {
-		target[key] = value.bind(target);
+		service[key] = value.bind(service);
 	} else if (Array.isArray(value)) {
-		target[key] = [...value];
+		service[key] = [...value];
 	} else if (value && typeof value === 'object') {
-		target[key] = { ...value };
+		service[key] = { ...value };
 	} else {
-		target[key] = value;
+		service[key] = value;
 	}
 }
 
-function getInstanceEntries(instance) {
-	const entries = [];
-	const ownKeys = Object.keys(instance || {});
+function getInstanceEntries() {
+	if (!instance || typeof instance !== 'object') {
+		return [];
+	}
 
-	ownKeys.forEach((key) => {
-		entries.push([key, instance[key]]);
-	});
+	const ownEntries = Object.entries(instance);
 
 	const proto = Object.getPrototypeOf(instance);
 	if (!proto || proto === Object.prototype) {
-		return entries;
+		return ownEntries;
 	}
 
-	const methodNames = Object.getOwnPropertyNames(proto)
-		.filter((name) => name !== 'constructor' && typeof instance[name] === 'function');
+	const methodEntries = Object.getOwnPropertyNames(proto)
+		.filter((name) => name !== 'constructor' && typeof instance[name] === 'function')
+		.map((name) => [name, instance[name]]);
 
-	methodNames.forEach((name) => {
-		entries.push([name, instance[name]]);
-	});
-
-	return entries;
+	return [...ownEntries, ...methodEntries];
 }
 
 export function setInstance(i) {
@@ -43,20 +39,12 @@ export function setInstance(i) {
 	instance = i;
 }
 
-/**
- * Retourne l'instance injectee active.
- * @returns {any}
- */
-export function getInstance() {
-	return instance;
-}
-
-export function applyInstances(service) {
+export function applyInstance(service) {
 	if (!instance) {
 		return;
 	}
 
-	const entries = getInstanceEntries(instance);
+	const entries = getInstanceEntries();
 	entries.forEach(([key, value]) => {
 		assignValue(service, key, value);
 	});
