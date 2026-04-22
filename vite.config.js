@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 
 import { URL, fileURLToPath } from 'node:url'
 import path from "path";
+import pkg from './package.json'
 
 export default defineConfig({
   plugins: [vue()],
@@ -22,16 +23,10 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.js'),
       name: 'ServiceLibrary',
       fileName: (format) => `service-library.${format}.js`,
-      formats: ['es', 'umd']
+      formats: ['es']
     },
     rollupOptions: {
-      external: ['vue', 'pinia'],
-      output: {
-        globals: {
-          vue: 'Vue',
-          pinia: 'Pinia'
-        }
-      }
+      external: [...Object.keys(pkg.peerDependencies || {})]
     }
   }
 
