@@ -183,7 +183,7 @@ class ServiceLocal extends ServiceBase {
         // it prevents the OAuth2 server from showing any user interaction prompts in the iframe and
         // instead immediately returns an error if the user is not already authenticated.
         const checkUrl = await checkClient.authorizationCode.getAuthorizeUri({
-          redirectUri: this.url + '/silent-check-sso-oauth.html',
+          redirectUri: this.url.replace(/\/$/, '') + '/silent-check-sso-oauth.html',
           state,
           codeVerifier,
           scope: ['openid'],
@@ -367,8 +367,7 @@ class ServiceLocal extends ServiceBase {
     // et il doit être utiliser pour obtenir le token 
     // cf. getAccessToken()
 
-    const url = this.url.includes("login") ? this.url : this.url + "/login";
-      
+    const url = this.url.includes("login") ? this.url : this.url.replace(/\/$/, '') + "/login";
     const codeVerifier = await generateCodeVerifier();
     const state = buildOAuthState();
 
@@ -415,7 +414,7 @@ class ServiceLocal extends ServiceBase {
     // La reponse fournit la 'session',
     // et la session doit être identique à celle issue de login
 
-    const url = this.url.includes("logout") ? this.url : this.url + "/logout";
+    const url = this.url.includes("logout") ? this.url : this.url.replace(/\/$/, '') + "/logout";
 
     var responseIAM = `${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout?
       scope=openid%20profile%20email&
@@ -439,7 +438,7 @@ class ServiceLocal extends ServiceBase {
    *   &client_id=my-client
    */
   async getAccessLogoutSilent () {
-    const url = this.url.includes("logout") ? this.url : this.url + "/logout";
+    const url = this.url.includes("logout") ? this.url : this.url.replace(/\/$/, '') + "/logout";
 
     if (!this.token || !this.token.idToken) {
       return Promise.reject(new Error('No ID token available for silent logout'));
@@ -478,7 +477,7 @@ class ServiceLocal extends ServiceBase {
    * }
   */
   async getAccessToken () {
-    const url = this.url.includes("login") ? this.url : this.url + "/login";
+    const url = this.url.includes("login") ? this.url : this.url.replace(/\/$/, '') + "/login";
     const urlParams = new URLSearchParams(location.search);
     const stateFromRedirect = urlParams.get('state');
     const storedState = sessionStorage.getItem(OAUTH_STATE_STORAGE_KEY);
