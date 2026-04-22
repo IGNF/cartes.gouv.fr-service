@@ -181,7 +181,7 @@ class ServiceBase {
             pkceMethod: "S256",
             checkLoginIframe: false,
             silentCheckSsoFallback: false,
-            silentCheckSsoRedirectUri: this.url + '/silent-check-sso-keycloak.html'
+            silentCheckSsoRedirectUri: this.url.replace(/\/$/, '') + '/silent-check-sso-keycloak.html'
         });
       } catch (error) {
         // @ts-ignore
