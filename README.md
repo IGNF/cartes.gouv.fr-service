@@ -1,4 +1,4 @@
-# cartes.gouv.fr-service
+# ![image](docs/cartes-gouv-logo.svg) cartes.gouv.fr-service
 
 Bibliotheque de services pour l'authentification et l'acces API (mode local et distant).
 
