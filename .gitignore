@@ -35,4 +35,7 @@ coverage/
 *.tmp
 .temp/
 
+# Custom ignores
 package-lock.json
+demo/package-lock.json
+demo/node_modules/
