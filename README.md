@@ -53,11 +53,22 @@ const onDisconnect = () => {
 </template>
 ```
 
-## Exemple
+## Exemple (playground)
+
+> Le playground utilise directement les sources dans un env vite / vue3
 
 Lancer l'exemple
 
 ```bash
+npm run dev
+```
+## Demo
+
+> La demo utilise le package tgz généré avec `npm pack` dans un env vite / vue3
+
+```bash
+cd demo/
+npm i
 npm run dev
 ```
 
