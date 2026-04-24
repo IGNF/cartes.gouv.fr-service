@@ -12,7 +12,7 @@
  * Users.user;
  */
 
-import { logger } from '@/utils/logger';
+import { logger } from '../utils/logger.js';
 
 var Users = {
 

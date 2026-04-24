@@ -2,7 +2,7 @@ import {
   defineStore
 } from 'pinia';
 
-import { serviceFactoryCreate } from '@/core/ServiceFactory';
+import { serviceFactoryCreate } from '../core/ServiceFactory.js';
 
 /**
  * État interne du store service.

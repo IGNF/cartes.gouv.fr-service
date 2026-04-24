@@ -1,9 +1,9 @@
-import ServiceBase from "@/core/ServiceBase";
-import ServiceLocal from '@/core/ServiceLocal';
-import ServiceRemote from '@/core/ServiceRemote';
-import { applyClass } from '@/core/extends/ExtendClass';
-import { applyInstance } from '@/core/extends/ExtendInstance';
-import { applyMixins } from '@/core/extends/ExtendMixin';
+import ServiceBase from './ServiceBase.js';
+import ServiceLocal from './ServiceLocal.js';
+import ServiceRemote from './ServiceRemote.js';
+import { applyClass } from './extends/ExtendClass.js';
+import { applyInstance } from './extends/ExtendInstance.js';
+import { applyMixins } from './extends/ExtendMixin.js';
 
 export const serviceFactoryCreate = (options) => {
     const inputOptions = options || {};

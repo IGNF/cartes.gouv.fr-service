@@ -1,7 +1,7 @@
-import ServiceBase from "@/core/ServiceBase";
-import { logger } from '@/utils/logger';
+import ServiceBase from "./ServiceBase";
+import { logger } from '../utils/logger.js';
 
-import { useServiceStore } from '@/store/ServiceStore';
+import { useServiceStore } from '../store/ServiceStore.js';
 
 class ServiceRemote extends ServiceBase {
 

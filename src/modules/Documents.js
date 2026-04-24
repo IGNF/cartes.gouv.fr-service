@@ -1,6 +1,6 @@
 import GetDocuments from "./GetDocuments";
 import SetDocuments from "./SetDocuments";
-import { logger } from '@/utils/logger';
+import { logger } from '../utils/logger.js';
 
 // nombre de documents à récupérer par page lors de la pagination
 const LIMIT_PER_PAGE = 50;

@@ -1,9 +1,9 @@
 import { ref } from 'vue';
 
-import { useServiceStore } from '@/store/ServiceStore';
-import { logger } from '@/utils/logger';
+import { useServiceStore } from '../store/ServiceStore.js';
+import { logger } from '../utils/logger.js';
 
-import { getSettings } from '@/core/extends/ExtendSettings';
+import { getSettings } from '../core/extends/ExtendSettings.js';
 
 const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
 

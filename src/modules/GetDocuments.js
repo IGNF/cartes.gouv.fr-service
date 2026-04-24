@@ -1,4 +1,4 @@
-import { useServiceStore } from '@/store/ServiceStore';
+import { useServiceStore } from '../store/ServiceStore.js';
 
 /**
  * @description 

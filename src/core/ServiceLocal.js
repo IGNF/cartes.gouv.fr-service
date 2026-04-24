@@ -1,8 +1,8 @@
-import ServiceBase from "@/core/ServiceBase";
-import { encryptValue, decryptValue } from "@/core/ServiceEncrypt";
-import { logger } from '@/utils/logger';
+import ServiceBase from './ServiceBase.js';
+import { encryptValue, decryptValue } from './ServiceEncrypt.js';
+import { logger } from '../utils/logger.js';
 
-import { useServiceStore } from '@/store/ServiceStore';
+import { useServiceStore } from '../store/ServiceStore.js';
 
 import { OAuth2Client, OAuth2Fetch } from '@badgateway/oauth2-client';
 import { generateCodeVerifier } from '@badgateway/oauth2-client';

@@ -1,9 +1,9 @@
-import Users from '@/modules/Users';
-import Documents from '@/modules/Documents';
+import Users from '../modules/Users.js';
+import Documents from '../modules/Documents.js';
 
-import { useServiceStore } from '@/store/ServiceStore';
-import { getSettings } from '@/core/extends/ExtendSettings';
-import { logger } from '@/utils/logger';
+import { useServiceStore } from '../store/ServiceStore.js';
+import { getSettings } from './extends/ExtendSettings.js';
+import { logger } from '../utils/logger.js';
 
 // client keycloak pour vérifier la session (iframe)
 import Keycloak from "keycloak-js";
