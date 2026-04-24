@@ -2,13 +2,15 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
 
-    "composite": true,
-    "noEmit": true,
-    "ignoreDeprecations": "6.0",
+    "declaration": true,                   /* Generates corresponding '.d.ts' file. */
+    "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
+    "sourceMap": true,                     /* Generates corresponding '.map' file. */
+    "outDir": "./dist/",                   /* Redirect output structure to the directory. */
     
-    "baseUrl": ".",
+    "composite": true,
+    
     "paths": {
       "@": ["./src"],
       "@/*": ["./src/*"]
@@ -22,5 +24,6 @@
 
     "types": ["vite/client"]
   },
-  "include": ["src", "playground", "dist"]
+  "include": ["./src/**/*.js", "./src/index.js"],
+  "exclude": []
 }

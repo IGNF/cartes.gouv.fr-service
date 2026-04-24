@@ -10,6 +10,18 @@ import Keycloak from "keycloak-js";
 
 const KEYCLOAK_SILENT_SSO_BLOCKED_KEY = 'auth:keycloak-silent-sso-blocked';
 
+/**
+ * @classdesc 
+ * Classe ServiceBase
+ * @description
+ * Cette classe sert de base pour les services qui nécessitent 
+ * une authentification utilisateur et une gestion de documents. 
+ * Elle initialise le service avec des options telles que
+ * -le statut d'authentification, 
+ * -les informations utilisateur, 
+ * -les documents 
+ * -et la gestion des erreurs.
+ */
 class ServiceBase {
 
   /** @type {import('@/core/extends/ExtendSettings').ServiceSettings} */
@@ -20,6 +32,7 @@ class ServiceBase {
   #emitter
 
   /**
+   * @constructor
    * Constructor for ServiceBase
    * @param {*} options 
    * @description

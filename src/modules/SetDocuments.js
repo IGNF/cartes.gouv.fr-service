@@ -139,7 +139,7 @@ var SetDocuments = {
 
       // FIXME
       // URL publique pour tous les documents, mais pas possible dans le POST !
-      formData.append("url_public", true);
+      formData.append("url_public", "true");
 
       // FIXME 
       // le champ extra n'est pas pris en compte par l'API Entrepot !?

@@ -29,7 +29,7 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
  * Composable d'authentification qui résout le statut, synchronise l'état
  * et peut déclencher un contrôle SSO silencieux.
  * @param {UseAuthDeps} [deps={}] Dépendances et callbacks d'exécution.
- * @returns {UseAuthResult}
+ * @returns {UseAuthResult} API d'authentification réactive et fonctions de contrôle.
  * @example
  * const service = getService({ mode : 'local'});
  * const { isAuthenticated, user, checkAuthentication, checkSession } = useAuth({

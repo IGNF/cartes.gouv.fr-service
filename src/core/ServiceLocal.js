@@ -21,6 +21,18 @@ function buildOAuthState () {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+/**
+ * ServiceLocal est une implémentation de ServiceBase qui gère l'authentification 
+ * via OAuth2 en mode local.
+ * 
+ * Il utilise la librairie @badgateway/oauth2-client pour gérer 
+ * le flux d'authentification OAuth2 avec PKCE.
+ * 
+ * Le mode local implique que l'application gère directement le flux 
+ * d'authentification avec le serveur IAM (ex. Keycloak) sans passer
+ * par une API intermédiaire.
+ * @extends ServiceBase
+ */
 class ServiceLocal extends ServiceBase {
 
   #client
@@ -343,7 +355,7 @@ class ServiceLocal extends ServiceBase {
   /** 
    * IAM pour se connecter
    * 
-   * @type {Promise}
+   * @returns {Promise<string>}
    * @see Login
    * @example
    * // requête :
@@ -395,7 +407,7 @@ class ServiceLocal extends ServiceBase {
   /** 
    * IAM pour se deconnecter
    * 
-   * @type {Promise}
+   * @returns {Promise<string>}
    * @see Logout
    * @example
    * // requête :
@@ -429,7 +441,7 @@ class ServiceLocal extends ServiceBase {
   /**
    * IAM pour se deconnecter silencieusement
    * 
-   * @type {Promise}
+   * @returns {Promise<string>}
    * @see Logout
    * @example
    * GET /realms/{realm}/protocol/openid-connect/logout?
@@ -455,7 +467,7 @@ class ServiceLocal extends ServiceBase {
   /** 
    * IAM pour obtenir le token
    * 
-   * @type {Promise}
+   * @returns {Promise<object>}
    * @see resolveAccessStatus
    * @example
    * POST https://sso.geopf.fr/realms/geoplateforme/protocol/openid-connect/token

@@ -3,6 +3,14 @@ import { logger } from '../utils/logger.js';
 
 import { useServiceStore } from '../store/ServiceStore.js';
 
+/**
+ * Service d'authentification à distance utilisant une redirection vers un IAM externe.
+ * Ce service gère les redirections de login/logout et résout le statut d'authentification
+ * en fonction des paramètres d'URL après redirection.
+ * 
+ * @extends ServiceBase
+ * @deprecated
+ */
 class ServiceRemote extends ServiceBase {
 
   constructor(options) {
