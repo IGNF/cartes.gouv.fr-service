@@ -1,11 +1,17 @@
 {
   "name": "cartes.gouv.fr-service",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "main": "dist/service-library.es.js",
-  "module": "dist/service-library.es.js",
+  "module": "./src/index.js",
   "exports": {
-    ".": "./dist/service-library.es.js"
+    ".": {
+      "source": "./src/index.js",
+      "import": "./dist/service-library.es.js",
+      "default": "./dist/service-library.es.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -15,10 +21,10 @@
     "package.json"
   ],
   "dependencies": {
+    "@badgateway/oauth2-client": "^3.3.1",
     "keycloak-js": "^26.2.2"
   },
   "devDependencies": {
-    "@badgateway/oauth2-client": "^3.3.1",
     "@eslint/js": "^9.39.4",
     "@vitejs/plugin-vue": "^5.2.4",
     "eslint": "^9.39.4",

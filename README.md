@@ -19,6 +19,20 @@ const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
 ```
 
+## Entrée package: bundle vs sources
+
+Par defaut, l'import racine utilise le bundle publie dans `dist/`:
+
+```js
+import { getService } from 'cartes.gouv.fr-service';
+```
+
+Si vous voulez explicitement consommer les sources (par exemple pour deboguer ou laisser la webapp rebundler le code), utilisez un sous-chemin `src`:
+
+```js
+import { getService } from 'cartes.gouv.fr-service/src/index.js';
+```
+
 ## Usage dans une page SPA
 
 ```js
@@ -62,6 +76,7 @@ Lancer l'exemple
 ```bash
 npm run dev
 ```
+
 ## Demo
 
 > La demo utilise le package tgz généré avec `npm pack` dans un env vite / vue3
