@@ -42,15 +42,15 @@ let globalSettings = {
 };
 
 /**
- * Remplace entièrement les paramètres globaux.
+ * Fusionne les paramètres fournis avec les paramètres globaux existants.
  *
- * Note: la fusion est volontairement simple (écrasement total) pour garder
- * un comportement prévisible entre environnements.
- * @param {ServiceSettings} settings Paramètres à appliquer.
+ * Note: la fusion est superficielle (shallow merge) — les clés fournies
+ * écrasent les valeurs existantes, les autres sont conservées.
+ * @param {ServiceSettings} settings Paramètres à fusionner.
  * @returns {void}
  */
 export function setSettings(settings) {
-  globalSettings = { ...(settings || {}) };
+  globalSettings = { ...globalSettings, ...(settings || {}) };
 }
 
 /**

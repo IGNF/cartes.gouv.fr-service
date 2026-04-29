@@ -1,6 +1,6 @@
 <script setup lang = "js">
 
-import { getService, useAuth } from 'cartes.gouv.fr-service';
+import { getService, useAuth, setSettings } from 'cartes.gouv.fr-service';
 import { useLogger } from 'vue-logger-plugin';
 import { onMounted } from 'vue';
 
@@ -13,6 +13,8 @@ log.apply({ enabled: true });
 // Optionnel: Masquer les logs debug/info (garder seulement warn/error)
 log.apply({ level: 'debug' });
 
+setSettings({ BaseUrl: import.meta.env.BASE_URL });
+
 const service = /** @type {any} */ (getService({ mode :'local' }));
 
 const {
@@ -22,7 +24,8 @@ const {
     service,
     onLogin: () => { console.info('→ Callback login: utilisateur connecté !'); }, // optionnel
     onLogout: () => { console.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
-    onError: (err) => { console.error('→ Callback erreur:', err); } // optionnel
+    onError: (err) => { console.error('→ Callback erreur:', err); }, // optionnel
+    options: { routing: false } // optionnel
 });
 
 const onConnect = () => {

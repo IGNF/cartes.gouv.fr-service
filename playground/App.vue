@@ -59,7 +59,8 @@ const {
     service,
     onLogin: () => { console.info('→ Callback login: utilisateur connecté !'); }, // optionnel
     onLogout: () => { console.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
-    onError: (err) => { console.error('→ Callback erreur:', err); } // optionnel
+    onError: (err) => { console.error('→ Callback erreur:', err); }, // optionnel
+    options: { routing: false } // optionnel
 });
 
 const onConnect = () => {

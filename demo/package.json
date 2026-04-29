@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "cartes.gouv.fr-service": "../cartes.gouv.fr-service-0.0.3.tgz",
+    "cartes.gouv.fr-service": "../cartes.gouv.fr-service-0.0.4.tgz",
     "pinia": "^2.1.7",
     "pinia-plugin-store": "^2.2.9",
     "vue": "^3.5.13",

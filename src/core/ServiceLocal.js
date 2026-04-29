@@ -52,6 +52,8 @@ class ServiceLocal extends ServiceBase {
     this.token = options.token || "";
     /** erreurs */
     this.error = options.error || {};
+    /** routing: si true, les redirectUri utilisent les routes /login et /logout */
+    this.routing = options.routing || false;
 
     // variables à instancier !
     this.#client = null;
@@ -64,6 +66,20 @@ class ServiceLocal extends ServiceBase {
     return this;
   }
   
+  /**
+   * Retourne la redirectUri pour un chemin donné.
+   * Si routing est actif, on appende le chemin (ex. /login, /logout).
+   * Sinon, on reste sur this.url (baseUrl).
+   * @param {string} route - ex. '/login' ou '/logout'
+   * @returns {string}
+   */
+  #redirectUri (route) {
+    if (!this.routing) {
+      return this.url.replace(/\/$/, '');
+    }
+    return this.url.replace(/\/$/, '') + route;
+  }
+
   /**
    * Initialisation du client oauth
   */
@@ -379,7 +395,7 @@ class ServiceLocal extends ServiceBase {
     // et il doit être utiliser pour obtenir le token 
     // cf. getAccessToken()
 
-    const url = this.url.includes("login") ? this.url : this.url.replace(/\/$/, '') + "/login";
+    const url = this.#redirectUri('/login');
     const codeVerifier = await generateCodeVerifier();
     const state = buildOAuthState();
 
@@ -426,7 +442,7 @@ class ServiceLocal extends ServiceBase {
     // La reponse fournit la 'session',
     // et la session doit être identique à celle issue de login
 
-    const url = this.url.includes("logout") ? this.url : this.url.replace(/\/$/, '') + "/logout";
+    const url = this.#redirectUri('/logout');
 
     var responseIAM = `${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout?
       scope=openid%20profile%20email&
@@ -450,7 +466,7 @@ class ServiceLocal extends ServiceBase {
    *   &client_id=my-client
    */
   async getAccessLogoutSilent () {
-    const url = this.url.includes("logout") ? this.url : this.url.replace(/\/$/, '') + "/logout";
+    const url = this.#redirectUri('/logout');
 
     if (!this.token || !this.token.idToken) {
       return Promise.reject(new Error('No ID token available for silent logout'));
@@ -489,7 +505,7 @@ class ServiceLocal extends ServiceBase {
    * }
   */
   async getAccessToken () {
-    const url = this.url.includes("login") ? this.url : this.url.replace(/\/$/, '') + "/login";
+    const url = this.#redirectUri('/login');
     const urlParams = new URLSearchParams(location.search);
     const stateFromRedirect = urlParams.get('state');
     const storedState = sessionStorage.getItem(OAUTH_STATE_STORAGE_KEY);

@@ -19,6 +19,33 @@ const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
 ```
 
+## Usage avancé
+
+```js
+import { getService, useAuth, setSettings } from '@cartes.gouv.fr/service';
+import { useRouter } from 'vue-router';
+
+// on utilise le router client
+const router = useRouter();
+
+// utilisation du fichier .env
+setSettings({ BaseUrl: import.meta.env.BASE_URL });
+
+const {
+  isAuthenticated,
+  user
+} = useAuth({
+    service,
+    router,
+    onLogin: () => { console.info('→ Callback login: utilisateur connecté !'); },
+    onLogout: () => { console.info('→ Callback logout: utilisateur déconnecté !'); }, 
+    onError: (err) => { console.error('→ Callback erreur:', err); }, 
+    options: { routing: false }
+});
+
+// avec l'options.routing à false, les pages SSO redirige vers la racine du site (base_url), et on n'utilise pas de routes /login ou /logout !
+```
+
 ## Entrée package: bundle vs sources
 
 Par defaut, l'import racine utilise le bundle publie dans `dist/`:
@@ -31,6 +58,17 @@ Si vous voulez explicitement consommer les sources (par exemple pour deboguer ou
 
 ```js
 import { getService } from 'cartes.gouv.fr-service/src/index.js';
+```
+
+Sous Vue / Vite, on configure l'utilisation des sources dans `vite.config.js` :
+
+```js
+resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'cartes.gouv.fr-service': fileURLToPath(new URL('./node_modules/cartes.gouv.fr-service/src/index.js', import.meta.url))
+    }
+  }
 ```
 
 ## Usage dans une page SPA
@@ -95,6 +133,7 @@ Vous pouvez configurer les parametres IAM via `setSettings`:
 import { setSettings } from '@cartes.gouv.fr/service';
 
 setSettings({
+  BaseUrl: '/demo',
   IamUrl: 'https://sso.geopf.fr',
   IamRealm: 'geoplateforme',
   IamClientId: 'cartes-gouv-public'
@@ -104,6 +143,7 @@ setSettings({
 Ou via l'utilisation d'un fichier .env (cf. playground)
 
 ```ini
+BASE_URL='/demo'
 IAM_URL="https://sso.geopf.fr"
 IAM_REALM="geoplateforme"
 IAM_CLIENT_ID="cartes-gouv-public"
@@ -113,6 +153,7 @@ IAM_CLIENT_ID="cartes-gouv-public"
 import { setSettings } from '@cartes.gouv.fr/service';
 
 setSettings({
+  BaseUrl : mport.meta.env.BASE_URL,
   IamUrl : import.meta.env.IAM_URL,
   IamRealm : import.meta.env.IAM_REALM,
   IamClientId : import.meta.env.IAM_CLIENT_ID,

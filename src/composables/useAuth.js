@@ -15,6 +15,7 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
  * @property {() => void} [onLogin] Callback exécuté lorsqu'un login est détecté.
  * @property {() => void} [onLogout] Callback exécuté lorsqu'un logout est détecté.
  * @property {(error: unknown) => void} [onError] Callback exécuté en cas d'erreur d'authentification.
+ * @property {Object} [options] Options supplémentaires pour le composable.
  */
 
 /**
@@ -36,7 +37,8 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
  *   service,
  *   onLogin: () => logger.log('User logged in!'),
  *   onLogout: () => logger.log('User logged out!'),
- *   onError: (e) => logger.error('Auth error:', e)
+ *   onError: (e) => logger.error('Auth error:', e),
+ *   options: { routing: true }
  * });
  */
 export function useAuth(deps = {}) {
@@ -50,11 +52,19 @@ export function useAuth(deps = {}) {
   const onLogin = deps.onLogin ?? (() => {});
   const onLogout = deps.onLogout ?? (() => {});
   const onError = deps.onError ?? ((e) => { logger.error('Authentication error :', e); });
+  // options 
+  // ex. routing: si true, le composable gère les redirections post-login/logout, 
+  // sinon c'est à l'app de gérer ça
+  const options = deps.options ?? { routing: false };
 
   // le service est requis pour le fonctionnement de ce composable
   if (!service) {
     throw new Error('Missing "service" injection for useAuth().');
   }
+
+  // on propage routing au service pour qu'il construise 
+  // les bonnes redirectUri
+  service.routing = options.routing ?? false;
 
   // export
   const isAuthenticated = ref(false);
@@ -62,14 +72,17 @@ export function useAuth(deps = {}) {
 
   /**
    * Remplace l'URL courante avec ou sans query params.
+   * Si options.routing est true, utilise le chemin fourni (ex. /login, /logout).
+   * Sinon, revient sur la baseUrl (racine de l'application).
    * Utilise le router injecté lorsqu'il est disponible,
    * sinon bascule sur history.replaceState.
    * @param {{ path?: string, query?: Record<string, string>|undefined }} [target]
    * @returns {Promise<void>}
    */
   const replaceUrl = async (target = {}) => {
-    const path = target.path ?? '/';
-    const query = target.query;
+    const baseUrl = import.meta.env.BASE_URL ?? '/';
+    const path = options.routing ? (target.path ?? baseUrl) : baseUrl;
+    const query = options.routing ? target.query : undefined;
 
     if (router) {
       await router.replace({ path, query });
@@ -176,8 +189,8 @@ export function useAuth(deps = {}) {
     if (hasKeycloakSession) {
       setAutoSSOAttemptedFlag();
       logger.debug('Keycloak session detected, redirecting to /login for silent auto-auth.');
-      if (IAM_CHECK_SSO_AUTO_AUTH === '1' && router) {
-        await router.push({ path: '/login', query: { from: 'auto-sso' } });
+      if (IAM_CHECK_SSO_AUTO_AUTH === '1' && options.routing && router) {
+        await replaceUrl({ path: '/login', query: { from: 'auto-sso' } });
         return true;
       }
       return false;
@@ -236,9 +249,7 @@ export function useAuth(deps = {}) {
         if (!isValid && service.authenticated) {
           logger.warn('Inconsistent local session (401 côté IAM/API), redirect to logout.');
           isAuthenticated.value = false;
-          if (router) {
-            router.push({ path: '/logout', query: { from: 'authInvalid' } });
-          }
+          await replaceUrl({ path: '/logout', query: { from: 'authInvalid' } });
           return;
         }
 
