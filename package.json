@@ -1,6 +1,6 @@
 {
   "name": "cartes.gouv.fr-service",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "main": "dist/service-library.es.js",
   "module": "./src/index.js",
@@ -52,7 +52,7 @@
     "build": "vite build",
     "generate-types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
     "generate-docs": "typedoc --options typedoc.json --jsDocCompatibility true --suppressCommentWarningsInDeclarationFiles",
-    "pack:check": "npm pack --dry-run",
+    "generate-package": "npm pack && ln -sf cartes.gouv.fr-service-*.tgz cartes.gouv.fr-service.tgz",
     "lint": "eslint .",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"

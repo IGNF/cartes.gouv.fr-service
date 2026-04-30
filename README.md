@@ -10,7 +10,34 @@ Bibliotheque de services pour l'authentification et l'acces API (mode local et d
 npm install cartes.gouv.fr-service
 ```
 
-## Usage minimal
+## Usage
+
+Au préalable, il faut mettre en place un store avec une persistance.
+Dans le fichier `main`, on ajoute :
+
+```js
+import { createPinia } from 'pinia'
+import { storePlugin } from 'pinia-plugin-store'
+
+const pinia = createPinia()
+const store = storePlugin({
+  stores: ['service'],
+  storage: localStorage,
+})
+pinia.use(store)
+...
+app.use(pinia)
+```
+
+ou une version simplifiée et embarquée :
+
+```js
+import { pinia } from 'cartes.gouv.fr-service';
+...
+app.use(pinia)
+```
+
+### Usage minimal
 
 ```js
 import { getService, useAuth } from '@cartes.gouv.fr/service';
@@ -19,7 +46,7 @@ const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
 ```
 
-## Usage avancé
+### Usage avancé
 
 ```js
 import { getService, useAuth, setSettings } from '@cartes.gouv.fr/service';
@@ -46,32 +73,7 @@ const {
 // avec l'options.routing à false, les pages SSO redirige vers la racine du site (base_url), et on n'utilise pas de routes /login ou /logout !
 ```
 
-## Entrée package: bundle vs sources
-
-Par defaut, l'import racine utilise le bundle publie dans `dist/`:
-
-```js
-import { getService } from 'cartes.gouv.fr-service';
-```
-
-Si vous voulez explicitement consommer les sources (par exemple pour deboguer ou laisser la webapp rebundler le code), utilisez un sous-chemin `src`:
-
-```js
-import { getService } from 'cartes.gouv.fr-service/src/index.js';
-```
-
-Sous Vue / Vite, on configure l'utilisation des sources dans `vite.config.js` :
-
-```js
-resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      'cartes.gouv.fr-service': fileURLToPath(new URL('./node_modules/cartes.gouv.fr-service/src/index.js', import.meta.url))
-    }
-  }
-```
-
-## Usage dans une page SPA
+### Usage dans une page SPA
 
 ```js
 <script setup>
@@ -105,6 +107,31 @@ const onDisconnect = () => {
 </template>
 ```
 
+## Package: bundle vs sources
+
+Par defaut, l'import racine utilise le bundle publie dans `dist/`:
+
+```js
+import { getService } from 'cartes.gouv.fr-service';
+```
+
+Si vous voulez explicitement consommer les sources (par exemple pour deboguer ou laisser la webapp rebundler le code), utilisez un sous-chemin `src`:
+
+```js
+import { getService } from 'cartes.gouv.fr-service/src/index.js';
+```
+
+Sous Vue / Vite, on configure l'utilisation des sources dans `vite.config.js` :
+
+```js
+resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'cartes.gouv.fr-service': fileURLToPath(new URL('./node_modules/cartes.gouv.fr-service/src/index.js', import.meta.url))
+    }
+  }
+```
+
 ## Exemple (playground)
 
 > Le playground utilise directement les sources dans un env vite / vue3
@@ -121,7 +148,9 @@ npm run dev
 
 ```bash
 cd demo/
-npm i
+rm -rf ./node_modules
+rm package-lock.json
+npm i --force --verbose
 npm run dev
 ```
 

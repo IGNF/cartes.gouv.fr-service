@@ -10,7 +10,6 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
 /**
  * @typedef {Object} UseAuthDeps - Dépendances acceptées par useAuth.
  * @property {Object} [service] Implémentation du service d'authentification (requise à l'exécution).
- * @property {Object} [store] Instance Pinia optionnelle.
  * @property {Object|null} [router] Instance Vue Router optionnelle.
  * @property {() => void} [onLogin] Callback exécuté lorsqu'un login est détecté.
  * @property {() => void} [onLogout] Callback exécuté lorsqu'un logout est détecté.
@@ -44,8 +43,8 @@ const AUTO_SSO_ATTEMPTED_KEY = 'auth:auto-sso-attempted';
 export function useAuth(deps = {}) {
   // service
   const service = deps.service;
-  // store (optionnel)
-  const serviceStore = deps.store ?? useServiceStore();
+  // store
+  const serviceStore = useServiceStore();
   // router (optionnel)
   const router = deps.router ?? null;
   // actions (optionnel)

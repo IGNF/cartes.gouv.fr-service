@@ -9,3 +9,5 @@ export { setSettings } from './core/extends/ExtendSettings';
 export { useAuth } from './composables/useAuth';
 // Store
 export { useServiceStore as useStore } from './store/ServiceStore';
+// Pinia
+export { pinia } from './utils/pinia';
