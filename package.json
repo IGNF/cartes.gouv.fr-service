@@ -40,7 +40,7 @@
   },
   "peerDependencies": {
     "pinia": "^2.1.0",
-    "pinia-plugin-store": "^2.2.9",
+    "pinia-plugin-store": "^3.0.8",
     "vue": "^3.4.0",
     "vue-logger-plugin": "^2.2.3",
     "vue-router": "^4.4.0"
