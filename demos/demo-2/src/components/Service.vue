@@ -1,30 +1,38 @@
 <script setup lang = "js">
 
-import { getService, useAuth, setSettings } from 'cartes.gouv.fr-service';
-import { useLogger } from 'vue-logger-plugin';
+import { getService, useAuth, setSettings, useStore, logger } from 'cartes.gouv.fr-service';
 import { onMounted } from 'vue';
 
-// Instance du logger
-const log = useLogger();
-
-// Optionnel: Désactiver le logger
-log.apply({ enabled: true });
-
-// Optionnel: Masquer les logs debug/info (garder seulement warn/error)
-log.apply({ level: 'debug' });
+const store = useStore();
 
 setSettings({ BaseUrl: import.meta.env.BASE_URL });
 
-const service = /** @type {any} */ (getService({ mode :'local' }));
+let persistedConnexion = null;
+
+if (store.connexion && Object.keys(store.connexion).length) {
+  persistedConnexion = store.connexion;
+} else {
+  try {
+    const persistedState = JSON.parse(localStorage.getItem('service') || '{}');
+    if (persistedState?.connexion && Object.keys(persistedState.connexion).length) {
+      persistedConnexion = persistedState.connexion;
+    }
+  } catch (error) {
+    console.warn('Unable to parse persisted service state from localStorage.', error);
+  }
+}
+
+const service = getService({ mode: 'local', ...(persistedConnexion || {}) });
+store.setService(service);
 
 const {
   isAuthenticated,
   user
 } = useAuth({
     service,
-    onLogin: () => { console.info('→ Callback login: utilisateur connecté !'); }, // optionnel
-    onLogout: () => { console.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
-    onError: (err) => { console.error('→ Callback erreur:', err); }, // optionnel
+    onLogin: () => { logger.info('→ Callback login: utilisateur connecté !'); }, // optionnel
+    onLogout: () => { logger.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
+    onError: (err) => { logger.error('→ Callback erreur:', err); }, // optionnel
     options: { routing: false } // optionnel
 });
 
@@ -42,7 +50,7 @@ const onDisconnect = () => {
 }
 const onDocs = async () => {
   const docs = await service.getDocuments();
-  console.log("→ Documents:", docs);
+  logger.info('→ Documents:', docs);
 }
 
 onMounted(() => {

@@ -21,4 +21,4 @@ const logger = createLogger({
   consoleEnabled: true
 });
 
-export { logger, createLogger };
+export { logger };

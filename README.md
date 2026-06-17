@@ -147,12 +147,18 @@ npm run dev
 > La demo utilise le package tgz généré avec `npm pack` dans un env vite / vue3
 
 ```bash
-cd demo/
-rm -rf ./node_modules
-rm package-lock.json
-npm i --force --verbose
+cd demo/demo-1/
+npm run update
 npm run dev
 ```
+
+Fonctionnalités des demos :
+
+* demo-1 :
+  exemple minimaliste où l'utilisateur met en place son propre store
+
+* demo-2 :
+  exemple avancé où on utilise le store / logger interne et, on met en place un exemple d'implementation de la persistance de la connexion
 
 ## Configuration
 

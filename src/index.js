@@ -7,6 +7,8 @@ export { setMixin } from './core/extends/ExtendMixin';
 export { setSettings } from './core/extends/ExtendSettings';
 // Composables
 export { useAuth } from './composables/useAuth';
+// Logger
+export { logger } from './utils/logger';
 // Store
 export { useServiceStore as useStore } from './store/ServiceStore';
 // Pinia
