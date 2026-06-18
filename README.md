@@ -10,6 +10,79 @@ Bibliotheque de services pour l'authentification et l'acces API (mode local et d
 npm install cartes.gouv.fr-service
 ```
 
+## Quick Start (5 minutes)
+
+### 1) Configurer les variables IAM (.env)
+
+```ini
+BASE_URL='/'
+IAM_URL='https://sso.geopf.fr'
+IAM_REALM='geoplateforme'
+IAM_CLIENT_ID='cartes-gouv-public'
+```
+
+### 2) Brancher Pinia dans `main.js`
+
+```js
+import { createApp } from 'vue';
+import App from './App.vue';
+import { pinia } from 'cartes.gouv.fr-service';
+
+createApp(App)
+  .use(pinia)
+  .mount('#app');
+```
+
+### 3) Initialiser le service et `useAuth`
+
+```js
+<script setup>
+import { getService, setSettings, useAuth } from 'cartes.gouv.fr-service';
+
+setSettings({
+  BaseUrl: import.meta.env.BASE_URL,
+  IamUrl: import.meta.env.IAM_URL,
+  IamRealm: import.meta.env.IAM_REALM,
+  IamClientId: import.meta.env.IAM_CLIENT_ID,
+});
+
+const service = getService({ mode: 'local' });
+const { isAuthenticated, user } = useAuth({ service, options: { routing: false } });
+
+const login = async () => {
+  const url = await service.getAccessLogin();
+  location.href = url;
+};
+
+const logout = async () => {
+  const url = await service.getAccessLogout();
+  location.href = url;
+};
+</script>
+```
+
+### 4) Afficher l'etat de connexion
+
+```vue
+<template>
+  <div v-if="isAuthenticated">
+    <pre>{{ user }}</pre>
+    <button @click="logout">Se deconnecter</button>
+  </div>
+  <div v-else>
+    <button @click="login">Se connecter</button>
+  </div>
+</template>
+```
+
+### 5) Lancer l'application
+
+```bash
+npm run dev
+```
+
+Si vous utilisez Vite avec des variables non prefixees par `VITE_`, autorisez le prefixe `IAM_` dans `vite.config.js` via `envPrefix`.
+
 ## Usage
 
 Au préalable, il faut mettre en place un store avec une persistance.
@@ -40,7 +113,7 @@ app.use(pinia)
 ### Usage minimal
 
 ```js
-import { getService, useAuth } from '@cartes.gouv.fr/service';
+import { getService, useAuth } from 'cartes.gouv.fr-service';
 
 const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
@@ -49,7 +122,7 @@ const { isAuthenticated, user } = useAuth({ service });
 ### Usage avancé
 
 ```js
-import { getService, useAuth, setSettings } from '@cartes.gouv.fr/service';
+import { getService, useAuth, setSettings, logger } from 'cartes.gouv.fr-service';
 import { useRouter } from 'vue-router';
 
 // on utilise le router client
@@ -64,9 +137,9 @@ const {
 } = useAuth({
     service,
     router,
-    onLogin: () => { console.info('→ Callback login: utilisateur connecté !'); },
-    onLogout: () => { console.info('→ Callback logout: utilisateur déconnecté !'); }, 
-    onError: (err) => { console.error('→ Callback erreur:', err); }, 
+  onLogin: () => { logger.info('→ Callback login: utilisateur connecté !'); },
+  onLogout: () => { logger.info('→ Callback logout: utilisateur déconnecté !'); }, 
+  onError: (err) => { logger.error('→ Callback erreur:', err); }, 
     options: { routing: false }
 });
 
@@ -77,7 +150,7 @@ const {
 
 ```js
 <script setup>
-import { getService, useAuth } from '@cartes.gouv.fr/service';
+import { getService, useAuth } from 'cartes.gouv.fr-service';
 
 const service = getService({ mode: 'local' });
 const { isAuthenticated, user } = useAuth({ service });
@@ -168,7 +241,7 @@ Fonctionnalités des demos :
 Vous pouvez configurer les parametres IAM via `setSettings`:
 
 ```js
-import { setSettings } from '@cartes.gouv.fr/service';
+import { setSettings } from 'cartes.gouv.fr-service';
 
 setSettings({
   BaseUrl: '/demo',
@@ -188,7 +261,7 @@ IAM_CLIENT_ID="cartes-gouv-public"
 ```
 
 ```js
-import { setSettings } from '@cartes.gouv.fr/service';
+import { setSettings } from 'cartes.gouv.fr-service';
 
 setSettings({
   BaseUrl : import.meta.env.BASE_URL,
@@ -228,3 +301,7 @@ Le tarball genere par `npm pack` inclut notamment:
 ## Diagrammes de Séquences - Authentification
 
 cf. [docs/authentication-sequence.md](docs/authentication-sequence.md)
+
+## Documentation interne
+
+- Fonctionnement interne + guide d'implementation utilisateur: [docs/internal-architecture.md](docs/internal-architecture.md)

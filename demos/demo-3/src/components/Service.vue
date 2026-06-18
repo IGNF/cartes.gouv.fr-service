@@ -26,9 +26,9 @@ const {
   user
 } = useAuth({
     service,
-    onLogin: () => { console.info('→ Callback login: utilisateur connecté !'); }, // optionnel
-    onLogout: () => { console.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
-    onError: (err) => { console.error('→ Callback erreur:', err); }, // optionnel
+  onLogin: () => { log.info('→ Callback login: utilisateur connecté !'); }, // optionnel
+  onLogout: () => { log.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
+  onError: (err) => { log.error('→ Callback erreur:', err); }, // optionnel
     options: { routing: false } // optionnel
 });
 
@@ -46,7 +46,7 @@ const onDisconnect = () => {
 }
 const onDocs = async () => {
   const docs = await service.getDocuments();
-  console.log("→ Documents:", docs);
+  log.info("→ Documents:", docs);
 }
 
 onMounted(() => {
