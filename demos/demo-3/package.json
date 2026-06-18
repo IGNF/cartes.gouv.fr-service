@@ -1,5 +1,5 @@
 {
-  "name": "vue-project-demo-2",
+  "name": "vue-project-demo-3",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "cartes.gouv.fr-service": "../../cartes.gouv.fr-service.tgz",
+    "pinia": "^2.1.0",
+    "pinia-plugin-store": "^3.0.8",
     "vue": "^3.5.13",
     "vue-logger-plugin": "^2.2.3"
   },

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode development-local",
     "build": "vite build",
     "preview": "vite preview",
     "update": "rm -rf node_modules/cartes.gouv.fr-service package-lock.json && npm install --verbose --force"

@@ -187,9 +187,20 @@ export function useAuth(deps = {}) {
 
     if (hasKeycloakSession) {
       setAutoSSOAttemptedFlag();
-      logger.debug('Keycloak session detected, redirecting to /login for silent auto-auth.');
-      if (IAM_CHECK_SSO_AUTO_AUTH === '1' && options.routing && router) {
-        await replaceUrl({ path: '/login', query: { from: 'auto-sso' } });
+      logger.debug('Keycloak session detected, redirecting for silent auto-auth.');
+      if (IAM_CHECK_SSO_AUTO_AUTH === '1') {
+        if (options.routing && router) {
+          await replaceUrl({ path: '/login', query: { from: 'auto-sso' } });
+        } else {
+          try {
+            const loginUrl = await service.getAccessLogin();
+            location.href = loginUrl;
+          } catch (error) {
+            console.error('Login after auto-sso failed:', error);
+            router.push({ path: '/', query: { from : 'login', success : 0 } });
+            return false;
+          }
+        }
         return true;
       }
       return false;

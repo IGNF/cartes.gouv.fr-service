@@ -160,6 +160,9 @@ Fonctionnalités des demos :
 * demo-2 :
   exemple avancé où on utilise le store / logger interne et, on met en place un exemple d'implementation de la persistance de la connexion
 
+* demo-3 :
+  exemple avancé avec l'utilisation de la session keycloak pour une reconnexion auto si une session existe
+
 ## Configuration
 
 Vous pouvez configurer les parametres IAM via `setSettings`:
@@ -175,7 +178,7 @@ setSettings({
 });
 ```
 
-Ou via l'utilisation d'un fichier .env (cf. playground)
+Ou via l'utilisation d'un fichier .env
 
 ```ini
 BASE_URL='/demo'
@@ -188,12 +191,19 @@ IAM_CLIENT_ID="cartes-gouv-public"
 import { setSettings } from '@cartes.gouv.fr/service';
 
 setSettings({
-  BaseUrl : mport.meta.env.BASE_URL,
+  BaseUrl : import.meta.env.BASE_URL,
   IamUrl : import.meta.env.IAM_URL,
   IamRealm : import.meta.env.IAM_REALM,
   IamClientId : import.meta.env.IAM_CLIENT_ID,
 });
 ```
+
+**NOTE:**
+> Il faut autoriser Vite à lire des variables d'environnements avec un prefixe `IAM`
+> Dans `vite.config.js`, ajouter :
+> `envPrefix: ["VITE_", "IAM_"]`
+> Puis, pour utiliser un fichier d'environnement comme  `.env.development-local`, ajouter le mode :
+> `vite --mode development-local`
 
 ## Tests
 

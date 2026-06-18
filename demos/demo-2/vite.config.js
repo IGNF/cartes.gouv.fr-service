@@ -6,6 +6,8 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: process.env.BASE_URL || '/demo',
+  envDir: '.',
+  envPrefix: ["VITE_", "IAM_"],
   plugins: [
     vue(),
   ],

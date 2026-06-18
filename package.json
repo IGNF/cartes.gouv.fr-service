@@ -1,6 +1,6 @@
 {
   "name": "cartes.gouv.fr-service",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "main": "dist/service-library.es.js",
   "module": "./src/index.js",
@@ -47,7 +47,7 @@
   },
   "scripts": {
     "test": "vitest",
-    "dev": "vite --config vite.config.js playground",
+    "dev": "vite --config vite.config.js --mode development-local playground",
     "watch": "vite build --watch",
     "build": "vite build",
     "generate-types": "npx tsc -p tsconfig.json --emitDeclarationOnly",

@@ -5,7 +5,7 @@
  * et les surcharges partielles selon l'environnement.
  * @typedef {Object} ServiceSettings
  * @property {string} [BaseUrl] URL de base applicative.
- * @property {string} [IamAuthMode] Mode d'authentification IAM (ex: keycloak).
+ * @property {string} [IamAuthMode] Mode d'authentification IAM (ex: local ou remote).
  * @property {boolean|string} [IamCheckSsoDisable] Désactive le contrôle SSO silencieux.
  * @property {boolean|string} [IamCheckSsoAutoAuth] Active la redirection automatique vers /login après détection de session IAM.
  * @property {string} [IamCheckSsoType] Type d'adaptateur utilisé pour le check SSO.
@@ -27,10 +27,10 @@
  */
 let globalSettings = {
   BaseUrl: '',
-  IamAuthMode: 'keycloak',
+  IamAuthMode: 'local',
   IamCheckSsoDisable: true,
   IamCheckSsoAutoAuth: false,
-  IamCheckSsoType: 'check-sso',
+  IamCheckSsoType: 'keycloak',
   IamCheckSsoTimeout: 2000,
   IamCheckSsoClientId: 'cartes-gouv-public',
   IamDisable: false,
