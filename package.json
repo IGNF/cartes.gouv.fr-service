@@ -1,6 +1,6 @@
 {
   "name": "cartes.gouv.fr-service",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "main": "dist/service-library.es.js",
   "module": "./src/index.js",
