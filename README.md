@@ -2,7 +2,7 @@
 
 Bibliotheque de services pour l'authentification et l'acces API (mode local et distant).
 
-## Installation
+## 📦 Installation
 
 **TODO**
 
@@ -10,7 +10,7 @@ Bibliotheque de services pour l'authentification et l'acces API (mode local et d
 npm install cartes.gouv.fr-service
 ```
 
-## Quick Start (5 minutes)
+## ⚡ Quick Start (5 minutes)
 
 ### 1) Configurer les variables IAM (.env)
 
@@ -83,7 +83,7 @@ npm run dev
 
 Si vous utilisez Vite avec des variables non prefixees par `VITE_`, autorisez le prefixe `IAM_` dans `vite.config.js` via `envPrefix`.
 
-## Usage
+## 🧩 Usage
 
 Au préalable, il faut mettre en place un store avec une persistance.
 Dans le fichier `main`, on ajoute :
@@ -180,7 +180,7 @@ const onDisconnect = () => {
 </template>
 ```
 
-## Package: bundle vs sources
+## 🛠️ Package: bundle vs sources
 
 Par defaut, l'import racine utilise le bundle publie dans `dist/`:
 
@@ -205,7 +205,7 @@ resolve: {
   }
 ```
 
-## Exemple (playground)
+## 🧪 Exemple (playground)
 
 > Le playground utilise directement les sources dans un env vite / vue3
 
@@ -215,7 +215,7 @@ Lancer l'exemple
 npm run dev
 ```
 
-## Demo
+## 🎬 Demo
 
 > La demo utilise le package tgz généré avec `npm pack` dans un env vite / vue3
 
@@ -236,7 +236,7 @@ Fonctionnalités des demos :
 * demo-3 :
   exemple avancé avec l'utilisation de la session keycloak pour une reconnexion auto si une session existe
 
-## Configuration
+## ⚙️ Configuration
 
 Vous pouvez configurer les parametres IAM via `setSettings`:
 
@@ -278,7 +278,7 @@ setSettings({
 > Puis, pour utiliser un fichier d'environnement comme  `.env.development-local`, ajouter le mode :
 > `vite --mode development-local`
 
-## Tests
+## ✅ Tests
 
 > Fonctionnement des classes pour etendre les fonctionnalités du service
 
@@ -288,7 +288,7 @@ Lancer les test
 npm run test
 ```
 
-## Contenu du package npm
+## 📁 Contenu du package npm
 
 Le tarball genere par `npm pack` inclut notamment:
 
@@ -298,10 +298,10 @@ Le tarball genere par `npm pack` inclut notamment:
 - `README.md`
 - `package.json`
 
-## Diagrammes de Séquences - Authentification
+## 🔐 Diagrammes de Séquences - Authentification
 
 cf. [docs/authentication-sequence.md](docs/authentication-sequence.md)
 
-## Documentation interne
+## 📚 Documentation interne
 
 - Fonctionnement interne + guide d'implementation utilisateur: [docs/internal-architecture.md](docs/internal-architecture.md)
