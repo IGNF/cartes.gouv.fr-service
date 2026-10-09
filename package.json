@@ -52,7 +52,7 @@
     "build": "vite build",
     "generate-types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
     "generate-docs": "typedoc --options typedoc.json --jsDocCompatibility true --suppressCommentWarningsInDeclarationFiles",
-    "generate-package": "npm pack && ln -sf cartes.gouv.fr-service-*.tgz cartes.gouv.fr-service.tgz",
+    "generate-package": "npm pack && ln -sf ignf-cartes.gouv.fr-service-*.tgz cartes.gouv.fr-service.tgz",
     "lint": "eslint .",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"

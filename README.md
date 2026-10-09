@@ -236,6 +236,10 @@ Fonctionnalités des demos :
 * demo-3 :
   exemple avancé avec l'utilisation de la session keycloak pour une reconnexion auto si une session existe
 
+* demo-4 :
+  exemple multi-pages (vue-router) : une page de connexion et des pages (profil, documents, session)
+  qui exploitent les informations de connexion persistées, partagées sur l'ensemble de l'application
+
 ## ⚙️ Configuration
 
 Vous pouvez configurer les parametres IAM via `setSettings`:
