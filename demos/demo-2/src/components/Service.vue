@@ -5,7 +5,11 @@ import { onMounted } from 'vue';
 
 const store = useStore();
 
-setSettings({ BaseUrl: import.meta.env.BASE_URL });
+setSettings({ 
+  BaseUrl: import.meta.env.BASE_URL,
+  IamClientId: import.meta.env.IAM_CLIENT_ID,
+  IamClientSecret: import.meta.env.IAM_CLIENT_SECRET
+});
 
 let persistedConnexion = null;
 

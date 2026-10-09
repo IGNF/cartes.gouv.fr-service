@@ -16,7 +16,9 @@ log.apply({ level: 'debug' });
 setSettings({ 
   BaseUrl: import.meta.env.BASE_URL,
   IamCheckSsoAutoAuth: import.meta.env.IAM_CHECK_SSO_AUTO_AUTH,
-  IamCheckSsoDisable: import.meta.env.IAM_CHECK_SSO_DISABLE
+  IamCheckSsoDisable: import.meta.env.IAM_CHECK_SSO_DISABLE,
+  IamClientId: import.meta.env.IAM_CLIENT_ID,
+  IamClientSecret: import.meta.env.IAM_CLIENT_SECRET
 });
 
 const service = /** @type {any} */ (getService({ mode :'local' }));

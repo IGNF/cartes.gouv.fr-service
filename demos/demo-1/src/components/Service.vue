@@ -13,7 +13,11 @@ log.apply({ enabled: true });
 // Optionnel: Masquer les logs debug/info (garder seulement warn/error)
 log.apply({ level: 'debug' });
 
-setSettings({ BaseUrl: import.meta.env.BASE_URL });
+setSettings({ 
+  BaseUrl: import.meta.env.BASE_URL,
+  IamClientId: import.meta.env.IAM_CLIENT_ID,
+  IamClientSecret: import.meta.env.IAM_CLIENT_SECRET
+});
 
 const service = /** @type {any} */ (getService({ mode :'local' }));
 
