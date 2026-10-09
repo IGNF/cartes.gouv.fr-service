@@ -101,7 +101,7 @@ class ServiceLocal extends ServiceBase {
   
     this.#client = new OAuth2Client(settings);
 
-    this.#fetchWrapper = new OAuth2Fetch({
+    const fetchWrapper = new OAuth2Fetch({
       client: this.#client,
       scheduleRefresh: true,
       getNewToken: async () => {
@@ -117,21 +117,25 @@ class ServiceLocal extends ServiceBase {
         return token;
       },
       storeToken: (token) => {
-        this.token = token;
+        if (this.#fetchWrapper === fetchWrapper) {
+          this.token = token;
+        }
       },
       getStoredToken: () => {
-        const token = this.#getTokenStorage();
+        const token = this.token || this.#getTokenStorage();
         if (token && Object.keys(token).length) {
           return token;
         }
         return null;
       },
       onError: (e) => {
+        if (this.#fetchWrapper !== fetchWrapper) return;
         logger.error(e);
         this.error = e;
       }
     });
 
+    this.#fetchWrapper = fetchWrapper;
     this.setFetch(this.#fetchWrapper.fetch.bind(this.#fetchWrapper));
   }
 
@@ -151,10 +155,7 @@ class ServiceLocal extends ServiceBase {
    */
   #getTokenStorage () {
     var service = JSON.parse(localStorage.getItem("service") || '{}');
-    if (service) {
-      return service.connexion.token;
-    }
-    return null;
+    return service?.connexion?.token || null;
   }
 
   /**
@@ -339,11 +340,29 @@ class ServiceLocal extends ServiceBase {
     if (!code && (session !== null || session === this.session)) {
       this.session = null;
       this.code = null;
+      this.codeVerifier = "";
       this.authenticated = false;
       this.token = null;
       this.user = {};
       this.documents = {};
       this.error = {};
+      if (this.#fetchWrapper) {
+        this.#fetchWrapper.options.scheduleRefresh = false;
+        clearTimeout(this.#fetchWrapper.refreshTimer);
+        this.#fetchWrapper.token = null;
+        this.#fetchWrapper = null;
+      }
+      this.setFetch(() => Promise.reject(new Error('OAuth2 session logged out')));
+      localStorage.removeItem("service");
+      localStorage.removeItem("codeVerifier");
+      for (const storage of [localStorage, sessionStorage]) {
+        const keys = Array.from({ length: storage.length }, (_, index) => storage.key(index));
+        for (const key of keys) {
+          if (key === OAUTH_STATE_STORAGE_KEY || key === OAUTH_PKCE_STORAGE_KEY || key?.startsWith(`${OAUTH_PKCE_STORAGE_KEY}:`)) {
+            storage.removeItem(key);
+          }
+        }
+      }
       status = "logout";
       promise = new Promise((resolve) => {
         resolve(status);
@@ -541,6 +560,9 @@ class ServiceLocal extends ServiceBase {
     const today = new Date(token.expiresAt);
     logger.debug("expires token", today);
 
+    if (!this.#fetchWrapper) {
+      this.#initialize({});
+    }
     this.#fetchWrapper.token = token; // HACK !?
 
     if (storedState) {
