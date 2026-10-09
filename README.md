@@ -240,6 +240,10 @@ Fonctionnalités des demos :
   exemple multi-pages (vue-router) : une page de connexion et des pages (profil, documents, session)
   qui exploitent les informations de connexion persistées, partagées sur l'ensemble de l'application
 
+* demo-5 :
+  variante de la demo-4 où chaque page / composant lit les informations de connexion
+  directement dans le store (`useStore()`), sans composable intermédiaire
+
 ## ⚙️ Configuration
 
 Vous pouvez configurer les parametres IAM via `setSettings`:

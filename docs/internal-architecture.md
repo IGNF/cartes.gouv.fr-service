@@ -235,4 +235,4 @@ const service = getService({ mode: 'local', ...persisted });
 
 - Sequence detaillee: `docs/authentication-sequence.md`
 - API complete: `docs/api/index.html`
-- Exemples d'integration: `demos/demo-1`, `demos/demo-2`, `demos/demo-3`, `demos/demo-4`
+- Exemples d'integration: `demos/demo-1`, `demos/demo-2`, `demos/demo-3`, `demos/demo-4`, `demos/demo-5`
