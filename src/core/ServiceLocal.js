@@ -267,6 +267,7 @@ class ServiceLocal extends ServiceBase {
     // parametres
     var code = urlParams.get('code');
     var session = urlParams.get('session_state');
+    var state = urlParams.get('state');
     var error = urlParams.get('error');
 
     // INFO
@@ -337,7 +338,7 @@ class ServiceLocal extends ServiceBase {
         })
     }
     // IAM logout local
-    if (!code && (session !== null || session === this.session)) {
+    if (!code && (session !== null || session === this.session || (state && state === this.session))) {
       this.session = null;
       this.code = null;
       this.codeVerifier = "";
@@ -450,29 +451,20 @@ class ServiceLocal extends ServiceBase {
    * // requête :
    * https://sso.geopf.fr/realms/geoplateforme/protocol/openid-connect/logout?
    *  post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcartes.gouv.fr-entree-carto/logout&
-   *  scope=profile%20email&
-   *  response_type=code&
-   *  approval_prompt=auto&
+   *  state=968321a6-385e-4058-a17a-571ab08303bd&
    *  client_id=IAM_CLIENT_ID
    * // réponse avec redirection :
-   * http://localhost:5173/cartes.gouv.fr-entree-carto/?
-   *  session_state=968321a6-385e-4058-a17a-571ab08303bd
+   * http://localhost:5173/cartes.gouv.fr-entree-carto/logout?
+   *  state=968321a6-385e-4058-a17a-571ab08303bd
    */
   async getAccessLogout () {
-    // INFO
-    // La reponse fournit la 'session',
-    // et la session doit être identique à celle issue de login
-
-    const url = this.#redirectUri('/logout');
-
-    var responseIAM = `${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout?
-      scope=openid%20profile%20email&
-      approval_prompt=auto&
-      response_type=code&
-      post_logout_redirect_uri=${url}?session_state=${this.session}&
-      client_id=${this.#client.settings.clientId}`.replace(/ /g, '');
-
-    return Promise.resolve(responseIAM);
+    const logoutUrl = new URL(`${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout`);
+    logoutUrl.searchParams.set('post_logout_redirect_uri', this.#redirectUri('/logout'));
+    logoutUrl.searchParams.set('client_id', this.#client.settings.clientId);
+    if (this.session) {
+      logoutUrl.searchParams.set('state', this.session);
+    }
+    return logoutUrl.toString();
   }
 
   /**
@@ -487,18 +479,13 @@ class ServiceLocal extends ServiceBase {
    *   &client_id=my-client
    */
   async getAccessLogoutSilent () {
-    const url = this.#redirectUri('/logout');
-
     if (!this.token || !this.token.idToken) {
       return Promise.reject(new Error('No ID token available for silent logout'));
     }
-    
-    var responseIAM = `${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout?
-      id_token_hint=${this.token.idToken}&
-      post_logout_redirect_uri=${url}?session_state=${this.session}&
-      client_id=${this.#client.settings.clientId}`.replace(/ /g, '');
 
-    return Promise.resolve(responseIAM);
+    const logoutUrl = new URL(await this.getAccessLogout());
+    logoutUrl.searchParams.set('id_token_hint', this.token.idToken);
+    return logoutUrl.toString();
   } 
   
   /** 
