@@ -101,7 +101,7 @@ class ServiceLocal extends ServiceBase {
   
     this.#client = new OAuth2Client(settings);
 
-    this.#fetchWrapper = new OAuth2Fetch({
+    const fetchWrapper = new OAuth2Fetch({
       client: this.#client,
       scheduleRefresh: true,
       getNewToken: async () => {
@@ -117,21 +117,25 @@ class ServiceLocal extends ServiceBase {
         return token;
       },
       storeToken: (token) => {
-        this.token = token;
+        if (this.#fetchWrapper === fetchWrapper) {
+          this.token = token;
+        }
       },
       getStoredToken: () => {
-        const token = this.#getTokenStorage();
+        const token = this.token || this.#getTokenStorage();
         if (token && Object.keys(token).length) {
           return token;
         }
         return null;
       },
       onError: (e) => {
+        if (this.#fetchWrapper !== fetchWrapper) return;
         logger.error(e);
         this.error = e;
       }
     });
 
+    this.#fetchWrapper = fetchWrapper;
     this.setFetch(this.#fetchWrapper.fetch.bind(this.#fetchWrapper));
   }
 
@@ -151,10 +155,7 @@ class ServiceLocal extends ServiceBase {
    */
   #getTokenStorage () {
     var service = JSON.parse(localStorage.getItem("service") || '{}');
-    if (service) {
-      return service.connexion.token;
-    }
-    return null;
+    return service?.connexion?.token || null;
   }
 
   /**
@@ -266,6 +267,7 @@ class ServiceLocal extends ServiceBase {
     // parametres
     var code = urlParams.get('code');
     var session = urlParams.get('session_state');
+    var state = urlParams.get('state');
     var error = urlParams.get('error');
 
     // INFO
@@ -336,14 +338,32 @@ class ServiceLocal extends ServiceBase {
         })
     }
     // IAM logout local
-    if (!code && (session !== null || session === this.session)) {
+    if (!code && (session !== null || session === this.session || (state && state === this.session))) {
       this.session = null;
       this.code = null;
+      this.codeVerifier = "";
       this.authenticated = false;
       this.token = null;
       this.user = {};
       this.documents = {};
       this.error = {};
+      if (this.#fetchWrapper) {
+        this.#fetchWrapper.options.scheduleRefresh = false;
+        clearTimeout(this.#fetchWrapper.refreshTimer);
+        this.#fetchWrapper.token = null;
+        this.#fetchWrapper = null;
+      }
+      this.setFetch(() => Promise.reject(new Error('OAuth2 session logged out')));
+      localStorage.removeItem("service");
+      localStorage.removeItem("codeVerifier");
+      for (const storage of [localStorage, sessionStorage]) {
+        const keys = Array.from({ length: storage.length }, (_, index) => storage.key(index));
+        for (const key of keys) {
+          if (key === OAUTH_STATE_STORAGE_KEY || key === OAUTH_PKCE_STORAGE_KEY || key?.startsWith(`${OAUTH_PKCE_STORAGE_KEY}:`)) {
+            storage.removeItem(key);
+          }
+        }
+      }
       status = "logout";
       promise = new Promise((resolve) => {
         resolve(status);
@@ -431,29 +451,20 @@ class ServiceLocal extends ServiceBase {
    * // requête :
    * https://sso.geopf.fr/realms/geoplateforme/protocol/openid-connect/logout?
    *  post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcartes.gouv.fr-entree-carto/logout&
-   *  scope=profile%20email&
-   *  response_type=code&
-   *  approval_prompt=auto&
+   *  state=968321a6-385e-4058-a17a-571ab08303bd&
    *  client_id=IAM_CLIENT_ID
    * // réponse avec redirection :
-   * http://localhost:5173/cartes.gouv.fr-entree-carto/?
-   *  session_state=968321a6-385e-4058-a17a-571ab08303bd
+   * http://localhost:5173/cartes.gouv.fr-entree-carto/logout?
+   *  state=968321a6-385e-4058-a17a-571ab08303bd
    */
   async getAccessLogout () {
-    // INFO
-    // La reponse fournit la 'session',
-    // et la session doit être identique à celle issue de login
-
-    const url = this.#redirectUri('/logout');
-
-    var responseIAM = `${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout?
-      scope=openid%20profile%20email&
-      approval_prompt=auto&
-      response_type=code&
-      post_logout_redirect_uri=${url}?session_state=${this.session}&
-      client_id=${this.#client.settings.clientId}`.replace(/ /g, '');
-
-    return Promise.resolve(responseIAM);
+    const logoutUrl = new URL(`${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout`);
+    logoutUrl.searchParams.set('post_logout_redirect_uri', this.#redirectUri('/logout'));
+    logoutUrl.searchParams.set('client_id', this.#client.settings.clientId);
+    if (this.session) {
+      logoutUrl.searchParams.set('state', this.session);
+    }
+    return logoutUrl.toString();
   }
 
   /**
@@ -468,18 +479,13 @@ class ServiceLocal extends ServiceBase {
    *   &client_id=my-client
    */
   async getAccessLogoutSilent () {
-    const url = this.#redirectUri('/logout');
-
     if (!this.token || !this.token.idToken) {
       return Promise.reject(new Error('No ID token available for silent logout'));
     }
-    
-    var responseIAM = `${this.#client.settings.server}/realms/${this.#client.settings.index}/protocol/openid-connect/logout?
-      id_token_hint=${this.token.idToken}&
-      post_logout_redirect_uri=${url}?session_state=${this.session}&
-      client_id=${this.#client.settings.clientId}`.replace(/ /g, '');
 
-    return Promise.resolve(responseIAM);
+    const logoutUrl = new URL(await this.getAccessLogout());
+    logoutUrl.searchParams.set('id_token_hint', this.token.idToken);
+    return logoutUrl.toString();
   } 
   
   /** 
@@ -541,6 +547,9 @@ class ServiceLocal extends ServiceBase {
     const today = new Date(token.expiresAt);
     logger.debug("expires token", today);
 
+    if (!this.#fetchWrapper) {
+      this.#initialize({});
+    }
     this.#fetchWrapper.token = token; // HACK !?
 
     if (storedState) {
