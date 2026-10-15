@@ -1,7 +1,7 @@
 <script setup lang = "js">
 
 import { getService, useAuth, setSettings, useStore, logger } from 'cartes.gouv.fr-service';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const store = useStore();
 
@@ -52,10 +52,8 @@ const onDisconnect = () => {
     location.href = url; // redirection vers la page sso
   });
 }
-const onDocs = async () => {
-  const docs = await service.getDocuments();
-  logger.info('→ Documents:', docs);
-}
+const documents = computed(() => store.connexion.documents || {});
+const profile = computed(() => store.connexion.user || {});
 
 onMounted(() => {
   
@@ -66,12 +64,24 @@ onMounted(() => {
 <template>
   <div>
     <h1>Playground</h1>
-
+    <p class="status">
+      <span v-if="isAuthenticated">🟢 Connecté</span>
+      <span v-else>⚪ Non connecté</span>
+    </p>
     <div v-if="isAuthenticated">
       <pre>{{ user }}</pre>
 
       <button @click="onDisconnect">Disconnect</button>
-      <button @click="onDocs">Get Documents (console)</button>
+      
+      <details>
+        <summary>Informations brutes (store)</summary>
+        <pre>{{ profile }}</pre>
+      </details>
+
+      <details>
+        <summary>Documents brutes (store)</summary>
+        <pre>{{ documents }}</pre>
+      </details>
     </div>
 
     <div v-else>

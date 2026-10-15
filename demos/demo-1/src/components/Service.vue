@@ -2,7 +2,7 @@
 
 import { getService, useAuth, setSettings } from 'cartes.gouv.fr-service';
 import { useLogger } from 'vue-logger-plugin';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 // Instance du logger
 const log = useLogger();
@@ -26,9 +26,9 @@ const {
   user
 } = useAuth({
     service,
-  onLogin: () => { log.info('→ Callback login: utilisateur connecté !'); }, // optionnel
-  onLogout: () => { log.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
-  onError: (err) => { log.error('→ Callback erreur:', err); }, // optionnel
+    onLogin: () => { log.info('→ Callback login: utilisateur connecté !'); }, // optionnel
+    onLogout: () => { log.info('→ Callback logout: utilisateur déconnecté !'); }, // optionnel
+    onError: (err) => { log.error('→ Callback erreur:', err); }, // optionnel
     options: { routing: false } // optionnel
 });
 
@@ -39,14 +39,19 @@ const onConnect = () => {
   });
 }
 const onDisconnect = () => {
+  // document.getElementById('documents-details').classList.add('hidden');
   service.getAccessLogout()
   .then((/** @type {any} */ url) => {
     location.href = url; // redirection vers la page sso
   });
 }
+
+const documents = ref({});
 const onDocs = async () => {
   const docs = await service.getDocuments();
   log.info("→ Documents:", docs);
+  document.getElementById('documents-details').classList.remove('hidden');
+  documents.value = docs;
 }
 
 onMounted(() => {
@@ -58,12 +63,20 @@ onMounted(() => {
 <template>
   <div>
     <h1>Playground</h1>
-
+    <p class="status">
+      <span v-if="isAuthenticated">🟢 Connecté</span>
+      <span v-else>⚪ Non connecté</span>
+    </p>
     <div v-if="isAuthenticated">
       <pre>{{ user }}</pre>
 
       <button @click="onDisconnect">Disconnect</button>
-      <button @click="onDocs">Get Documents (console)</button>
+      <button @click="onDocs">Get Documents</button>
+
+      <details id="documents-details" class="hidden">
+        <summary>Documents brutes (store)</summary>
+        <pre>{{ documents }}</pre>
+      </details>
     </div>
 
     <div v-else>
@@ -72,5 +85,8 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
+  .hidden {
+    display: none;
+  }
 </style>
