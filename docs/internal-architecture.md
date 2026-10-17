@@ -7,7 +7,7 @@ Ce document explique l'architecture interne de `cartes.gouv.fr-service`, et prop
 La librairie fournit une couche unique pour:
 
 - gerer l'authentification IAM (mode `local` OAuth2/PKCE ou mode `remote`)
-- centraliser l'etat de connexion dans un store Pinia persistant
+- centraliser l'etat de connexion dans un store Pinia, persistant par defaut
 - exposer des operations metier sur l'utilisateur et les documents
 - simplifier l'integration frontend via le composable `useAuth`
 
@@ -40,6 +40,7 @@ Le point d'entree exporte:
 - `setSettings` (configuration globale)
 - `useStore` (acces store service)
 - `pinia` (instance Pinia preconfiguree)
+- `configurePersistence` (choix global `localStorage` ou `memory`, avant creation du service/store)
 
 ### 2) Factory et instanciation
 
@@ -92,7 +93,26 @@ Le store `service` contient:
 - `connexion`: snapshot de l'instance service
 - `authentificateSyncNeeded`: drapeau de synchronisation
 
-Le plugin `pinia-plugin-store` persiste ce store dans `localStorage`.
+Par defaut, le plugin `pinia-plugin-store` persiste ce store dans `localStorage`.
+Il est applique a la creation du store, sans acces au stockage lors de l'import
+de la librairie.
+
+L'appel `configurePersistence({ mode: 'memory' })` avant la creation de tout
+service/store desactive ce plugin et les acces directs au localStorage du service
+OAuth. Il supprime les anciennes cles locales de la librairie (`service`,
+`codeVerifier`, `oauth2:state`, `oauth2:pkce`, `oauth2:pkce:*`), sans lire leur
+contenu ni modifier les cles tierces. Un echec de nettoyage est remonte et
+l'activation echoue.
+
+La politique est verrouillee au premier usage du service/store. En mode memoire,
+les jetons, le profil et les documents restent reactifs mais sont perdus au
+rechargement. Seuls le state et le verificateur PKCE du flux OAuth restent
+temporairement dans sessionStorage pour survivre a la redirection ; ils sont
+nettoyes apres l'echange reussi ou a la deconnexion. Les marqueurs techniques SSO
+et les cookies IAM conservent leur fonctionnement.
+
+Avec un Pinia personnalise, l'application doit elle-meme exclure `service` de ses
+plugins de persistance en mode memoire.
 
 ## Sequence d'authentification au demarrage
 

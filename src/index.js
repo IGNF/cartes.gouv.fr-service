@@ -13,3 +13,4 @@ export { logger } from './utils/logger';
 export { useServiceStore as useStore } from './store/ServiceStore';
 // Pinia
 export { pinia } from './utils/pinia';
+export { configurePersistence } from './utils/persistence';

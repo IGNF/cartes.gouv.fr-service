@@ -4,6 +4,12 @@
 
 Ce document décrit le flux d'authentification du service. Il existe deux modes d'authentification : **Local** (OAuth2 avec PKCE) et **Remote** (IAM distant).
 
+La persistance est indépendante du mode d'authentification : localStorage par
+défaut, ou mémoire seule avec `configurePersistence({ mode: 'memory' })` avant
+la création du service/store. Dans ce dernier cas, les jetons, le profil et les
+documents sont perdus au rechargement. Le flux OAuth utilise toujours un
+sessionStorage temporaire pour survivre à la redirection SSO.
+
 ---
 
 ## Mode Local (OAuth2 avec PKCE)
@@ -19,12 +25,12 @@ sequenceDiagram
     User->>App: Accède à l'application
     App->>Service: useAuth() - checkAuthentication()
     
-    alt Token en localStorage
+    alt Token disponible (mémoire ou localStorage si persistance active)
         Service->>Service: Réutilise le token stocké
         Service->>App: isAuthenticated = true
     else Pas de token
         Note over Service: Génère codeVerifier (PKCE)
-        Service->>Service: Stocke codeVerifier
+        Service->>Service: Stocke state + codeVerifier en sessionStorage
         
         Service->>KeyCloak: Redirige vers /auth<br/>+ code_challenge<br/>+ state
         KeyCloak->>User: Formulaire de login
@@ -38,7 +44,8 @@ sequenceDiagram
         KeyCloak->>KeyCloak: Valide code_challenge
         KeyCloak->>Service: Retourne access_token<br/>+ refresh_token
         
-        Service->>Service: Stocke token en localStorage
+        Service->>Service: Conserve token en mémoire (localStorage si persistance active)
+        Service->>Service: Nettoie state + codeVerifier temporaires
         Service->>API: Requête /me (token)
         API->>Service: Données utilisateur
         
@@ -51,10 +58,10 @@ sequenceDiagram
 
 **Points clés:**
 - **PKCE (Proof Key for Code Exchange)**: Sécurise le flux OAuth2
-  - `code_verifier` généré et stocké localement
+  - `code_verifier` généré et stocké temporairement en sessionStorage
   - `code_challenge` envoyé à l'autorisation
   - `code_verifier` transmis à l'échange de token
-- **Token stocké localement** pour les requêtes suivantes
+- **Token conservé en mémoire**, et persisté en localStorage seulement si la persistance est active
 - **Refresh automatique** si token expiré
 
 ---
@@ -122,7 +129,7 @@ sequenceDiagram
 
     App->>Service: checkSession()
     
-    alt Token valide en localStorage
+    alt Token valide disponible (mémoire ou localStorage si persistance active)
         Service->>Service: Réutilise le token
         Service->>App: return true
     else Token expiré
@@ -157,6 +164,18 @@ sequenceDiagram
 ---
 
 ## Stockage Persistant
+
+Ce stockage est actif par défaut. Le mode `memory` le désactive et supprime
+uniquement les anciennes clés localStorage de la librairie (`service`,
+`codeVerifier`, `oauth2:state`, `oauth2:pkce`, `oauth2:pkce:*`). Un échec de
+nettoyage empêche l'activation ; les clés tierces et le flux OAuth en cours dans
+sessionStorage sont préservés. Après l'activation, aucun accès localStorage
+n'est effectué par la librairie.
+
+Les données OAuth temporaires sont supprimées après un échange réussi ou une
+déconnexion. Les marqueurs techniques SSO en sessionStorage et les cookies IAM
+ne sont pas affectés. Si l'application installe elle-même un plugin de
+persistance Pinia, elle doit en exclure `service` pour respecter le mode mémoire.
 
 ```json
 {

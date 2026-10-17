@@ -3,6 +3,7 @@ import {
 } from 'pinia';
 
 import { serviceFactoryCreate } from '../core/ServiceFactory.js';
+import { lockPersistence } from '../utils/persistence.js';
 
 /**
  * État interne du store service.
@@ -36,10 +37,13 @@ import { serviceFactoryCreate } from '../core/ServiceFactory.js';
 export const useServiceStore = defineStore({
   id: 'service',
   /** @returns {ServiceStoreState} */
-  state: () => ({
-    connexion: {},
-    authentificateSyncNeeded: false
-  }),
+  state: () => {
+    lockPersistence();
+    return {
+      connexion: {},
+      authentificateSyncNeeded: false
+    };
+  },
   getters: {
     /**
      * Retourne l'indicateur de synchronisation d'authentification.

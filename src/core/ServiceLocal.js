@@ -1,6 +1,7 @@
 import ServiceBase from './ServiceBase.js';
 import { encryptValue, decryptValue } from './ServiceEncrypt.js';
 import { logger } from '../utils/logger.js';
+import { isPersistenceEnabled } from '../utils/persistence.js';
 
 import { useServiceStore } from '../store/ServiceStore.js';
 
@@ -154,6 +155,9 @@ class ServiceLocal extends ServiceBase {
    * }
    */
   #getTokenStorage () {
+    if (!isPersistenceEnabled()) {
+      return null;
+    }
     var service = JSON.parse(localStorage.getItem("service") || '{}');
     return service?.connexion?.token || null;
   }
@@ -354,9 +358,13 @@ class ServiceLocal extends ServiceBase {
         this.#fetchWrapper = null;
       }
       this.setFetch(() => Promise.reject(new Error('OAuth2 session logged out')));
-      localStorage.removeItem("service");
-      localStorage.removeItem("codeVerifier");
-      for (const storage of [localStorage, sessionStorage]) {
+      const storages = [sessionStorage];
+      if (isPersistenceEnabled()) {
+        localStorage.removeItem("service");
+        localStorage.removeItem("codeVerifier");
+        storages.push(localStorage);
+      }
+      for (const storage of storages) {
         const keys = Array.from({ length: storage.length }, (_, index) => storage.key(index));
         for (const key of keys) {
           if (key === OAUTH_STATE_STORAGE_KEY || key === OAUTH_PKCE_STORAGE_KEY || key?.startsWith(`${OAUTH_PKCE_STORAGE_KEY}:`)) {
@@ -425,8 +433,10 @@ class ServiceLocal extends ServiceBase {
     const encryptedState = await encryptValue(state);
     sessionStorage.setItem(`${OAUTH_PKCE_STORAGE_KEY}:${encryptedState}`, codeVerifier);
     sessionStorage.setItem(OAUTH_STATE_STORAGE_KEY, encryptedState);
-    // Compatibilite avec les anciennes sessions/login en cours.
-    localStorage.setItem("codeVerifier", codeVerifier);
+    if (isPersistenceEnabled()) {
+      // Compatibilite avec les anciennes sessions/login en cours.
+      localStorage.setItem("codeVerifier", codeVerifier);
+    }
     
     var responseIAM = await this.#client.authorizationCode.getAuthorizeUri({
       redirectUri: url,
@@ -524,11 +534,12 @@ class ServiceLocal extends ServiceBase {
     }
 
     const expectedState = stateFromRedirect || storedStateDecrypted;
-    const codeVerifierFromState = expectedState
-      ? sessionStorage.getItem(`${OAUTH_PKCE_STORAGE_KEY}:${expectedState}`)
+    const codeVerifierFromState = storedState
+      ? sessionStorage.getItem(`${OAUTH_PKCE_STORAGE_KEY}:${storedState}`)
       : null;
       
-    var codeVerifier = this.codeVerifier || codeVerifierFromState || localStorage.getItem("codeVerifier");
+    var codeVerifier = this.codeVerifier || codeVerifierFromState ||
+      (isPersistenceEnabled() ? localStorage.getItem("codeVerifier") : null);
 
     if (!codeVerifier) {
       throw new Error('Missing PKCE code verifier');
@@ -556,7 +567,9 @@ class ServiceLocal extends ServiceBase {
       sessionStorage.removeItem(`${OAUTH_PKCE_STORAGE_KEY}:${storedState}`);
     }
     sessionStorage.removeItem(OAUTH_STATE_STORAGE_KEY);
-    localStorage.removeItem("codeVerifier");
+    if (isPersistenceEnabled()) {
+      localStorage.removeItem("codeVerifier");
+    }
 
     var store = useServiceStore();
     store.setService(this);

@@ -85,7 +85,8 @@ Si vous utilisez Vite avec des variables non prefixees par `VITE_`, autorisez le
 
 ## 🧩 Usage
 
-Au préalable, il faut mettre en place un store avec une persistance.
+Au préalable, il faut mettre en place un store Pinia. La persistance dans
+localStorage est active par défaut, mais peut être désactivée.
 Dans le fichier `main`, on ajoute :
 
 ```js
@@ -109,6 +110,50 @@ import { pinia } from 'cartes.gouv.fr-service';
 ...
 app.use(pinia)
 ```
+
+### Conserver la connexion et les documents uniquement en mémoire
+
+Configurez le mode avant de créer un service ou un store, par exemple dans
+`main.js`, avant `app.use(pinia)` :
+
+```js
+import { createApp } from 'vue';
+import App from './App.vue';
+import { configurePersistence, pinia } from 'cartes.gouv.fr-service';
+
+configurePersistence({ mode: 'memory' });
+
+createApp(App)
+  .use(pinia)
+  .mount('#app');
+```
+
+Cette option est globale et s'applique aux modes d'authentification `local` et
+`remote`. Le store reste réactif, mais la connexion, les jetons, le profil et
+les documents ne sont plus sérialisés dans localStorage.
+
+- L'activation supprime les anciennes clés localStorage de la librairie :
+  `service`, `codeVerifier`, `oauth2:state`, `oauth2:pkce` et `oauth2:pkce:*`.
+  Les autres clés ne sont pas modifiées. Un échec de nettoyage lève une erreur
+  et empêche l'activation du mode mémoire.
+- Après ce nettoyage initial, la librairie n'accède plus au localStorage en
+  mode mémoire.
+- Un rechargement ou une fermeture de page fait perdre les données en mémoire.
+  La session IAM peut toutefois permettre une nouvelle authentification SSO.
+- Pour permettre la redirection OAuth, le `state` et le vérificateur PKCE
+  restent temporairement dans sessionStorage. Ils sont supprimés après un
+  échange de jeton réussi ou une déconnexion. Les marqueurs techniques SSO en
+  sessionStorage et les cookies IAM ne sont pas désactivés.
+- Le mode doit être choisi à chaque démarrage de l'application. Le changement
+  après création d'un service ou d'un store lève une erreur.
+
+Sans configuration, le comportement historique reste inchangé. Pour le choisir
+explicitement, utilisez `configurePersistence({ mode: 'localStorage' })`.
+
+**Avec votre propre instance Pinia :** appelez également `configurePersistence`
+avant de créer le service/store et n'installez pas de plugin de persistance pour
+le store `service` en mode mémoire. La librairie ne peut pas désactiver un plugin
+que votre application installe indépendamment.
 
 ### Usage minimal
 
@@ -243,6 +288,11 @@ Fonctionnalités des demos :
 * demo-5 :
   variante de la demo-4 où chaque page / composant lit les informations de connexion
   directement dans le store (`useStore()`), sans composable intermédiaire
+
+* [demo-6](demos/demo-6/README.md) :
+  exemple multi-pages avec `configurePersistence({ mode: 'memory' })` :
+  connexion, profil et documents uniquement en mémoire, sans persistance dans
+  localStorage ; les données sont perdues au rechargement
 
 ## ⚙️ Configuration
 
