@@ -1,0 +1,66 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #253247;
+  background: #f6f8fa;
+  line-height: 1.6;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+a {
+  color: #0055a4;
+}
+
+nav a.router-link-exact-active {
+  font-weight: 700;
+}
+
+.notice {
+  padding: 1rem;
+  border-left: 4px solid #0055a4;
+  background: #e8f0fa;
+}
+
+.notice strong {
+  display: block;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.25rem 1rem;
+}
+
+dt {
+  font-weight: 600;
+}
+
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  color: #b00020;
+}

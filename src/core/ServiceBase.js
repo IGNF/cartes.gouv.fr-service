@@ -4,6 +4,7 @@ import Documents from '../modules/Documents.js';
 import { useServiceStore } from '../store/ServiceStore.js';
 import { getSettings } from './extends/ExtendSettings.js';
 import { logger } from '../utils/logger.js';
+import { lockPersistence } from '../utils/persistence.js';
 
 // client keycloak pour vérifier la session (iframe)
 import Keycloak from "keycloak-js";
@@ -45,6 +46,7 @@ class ServiceBase {
    * if access is valid, getting login/logout information, and retrieving access tokens.
    */
   constructor(options) {
+    lockPersistence();
     options = options || {};
     this.settings = getSettings();
 

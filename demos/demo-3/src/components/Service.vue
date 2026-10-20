@@ -60,7 +60,10 @@ onMounted(() => {
 <template>
   <div>
     <h1>Playground</h1>
-
+    <p class="status">
+      <span v-if="isAuthenticated">🟢 Connecté</span>
+      <span v-else>⚪ Non connecté</span>
+    </p>
     <div v-if="isAuthenticated">
       <pre>{{ user }}</pre>
 
