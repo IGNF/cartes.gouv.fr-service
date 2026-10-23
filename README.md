@@ -1,3 +1,10 @@
+> **⚠️ DÉPÔT ARCHIVÉ — N'EST PLUS MAINTENU**
+>
+> Ce dépôt n'est plus maintenu. Son développement et sa maintenance ont été transférés vers **[authentification](https://github.com/lowzonenose/authentification)**.
+>
+> Pour tout nouveau développement, correctif ou contribution, veuillez utiliser le nouveau dépôt.
+>
+> Ce dépôt est conservé à titre d'archive et de référence historique.
 # ![image](docs/cartes-gouv-logo.svg) cartes.gouv.fr-service
 
 Bibliotheque de services pour l'authentification et l'acces API (mode local et distant).
